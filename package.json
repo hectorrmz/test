@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "heroku/node integration  app test",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hectorrmz/test.git"
@@ -18,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/hectorrmz/test/issues"
   },
-  "homepage": "https://github.com/hectorrmz/test#readme"
+  "homepage": "https://github.com/hectorrmz/test#readme",
+  "devDependencies": {
+    "express": "^4.3.1"
+  }
 }
