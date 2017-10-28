@@ -6,7 +6,7 @@ export class AppConfig {
         stateProvider
             .state('app', {
                 url: '/',
-                template: '<h2>Hello world!</h2>'
+                template: `<h2>Hello world!</h2><p>Visiting on ${new Date()}</p>`
             });
 
         urlRouterProvider.otherwise('/');
