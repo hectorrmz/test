@@ -4,7 +4,9 @@
   "description": "heroku/node integration  app test",
   "main": "index.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "npm install && webpack --profile --progress && node main.js",
+    "build": "webpack --profile --progress",
+    "watch": "webpack --profile --progress --watch"
   },
   "repository": {
     "type": "git",
@@ -20,10 +22,23 @@
     "url": "https://github.com/hectorrmz/test/issues"
   },
   "homepage": "https://github.com/hectorrmz/test#readme",
-  "devDependencies": {
-    "express": "^4.3.1"
-  },
   "dependencies": {
-    "express": "^4.3.1"
+    "angular": "^1.5.8",
+    "angular-ui-router": "^0.4.2",
+    "express": "^4.3.1",
+    "request": "^2.83.0"
+  },
+  "devDependencies": {
+    "@types/angular": "^1.5.8",
+    "@types/angular-ui-router": "^1.1.36",
+    "@types/jquery": "^2.0.40",
+    "awesome-typescript-loader": "^3.1.2",
+    "gulp": "^3.9.1",
+    "gulp-angular-templatecache": "^2.0.0",
+    "gulp-sass": "^2.3.2",
+    "node-sass": "^3.13.0",
+    "source-map": "^0.5.6",
+    "typescript": "^2.1.1",
+    "webpack": "2.2.1"
   }
 }
