@@ -22,5 +22,8 @@
   "homepage": "https://github.com/hectorrmz/test#readme",
   "devDependencies": {
     "express": "^4.3.1"
+  },
+  "dependencies": {
+    "express": "^4.3.1"
   }
 }
