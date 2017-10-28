@@ -19,7 +19,7 @@ gulp.task('bundle-tpls', function() {
 
 // Watches for changes in application's files
 gulp.task('watch', ['build-ui'], function(done) {
-    gulp.watch(config.scss.src, ['css']);
+    gulp.watch(config.scss.src, ['sass']);
     gulp.watch(config.html.src, ['bundle-tpls']);
 });
 
