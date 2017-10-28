@@ -1,0 +1,2 @@
+angular.module('app.tpls', []).run(['$templateCache', function($templateCache) {$templateCache.put('home/home.tpl.html','<div class="home">\nThis is home view\n</div>');
+$templateCache.put('layout/layout.tpl.html','<div class="layout">\n    <h2>Hello world!</h2>\n    <p>Visiting on {{vm.date}}</p>\n    <div ui-view="content"></div>\n</div>');}]);

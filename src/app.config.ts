@@ -1,14 +1,6 @@
 import { Inject } from './decorators/decorators';
 
-@Inject('$stateProvider', '$urlRouterProvider')
+@Inject()
 export class AppConfig {
-    constructor(stateProvider: ng.ui.IStateProvider, urlRouterProvider: ng.ui.IUrlRouterProvider) {
-        stateProvider
-            .state('app', {
-                url: '/',
-                template: `<h2>Hello world!</h2><p>Visiting on ${new Date()}</p>`
-            });
-
-        urlRouterProvider.otherwise('/');
-    }
+    
 }
