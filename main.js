@@ -47,20 +47,24 @@
 
 	app.get("/issues", function (req, res) {
 
-		var username = "";
-		var password = "";
+		var url_parts = url.parse(req.url, true);
+		var query = url_parts.query;
 
-		var encode = Buffer.from(username + ":" + password).toString("base64");
-		console.log(encode);
+		if (!query.key && !query.id) {
+			res.status("401").send({ message: "Not Authorized" });
+		}
+
+		console.log(query)
 
 		var options = {
 			protocol: "https",
-			host: `${username}:${password}@dev.unosquare.com`,
-			pathname: "/redmine/issues.json"
+			host: "dev.unosquare.com",
+			pathname: "/redmine/issues.json",
+			query: { key: query.key, assigned_to_id: query.id }
 		};
 
 		var jsonUrl = url.format(options);
-
+		console.log(jsonUrl);
 		request(jsonUrl).pipe(res);
 
 	});

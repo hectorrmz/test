@@ -201,6 +201,13 @@ var HomeController = (function () {
                 };
                 _this._authService.loginRM(user).then(function (response) {
                     console.log(response.data.user);
+                    _this.rdUser = response.data.user;
+                    if (_this.rdUser && _this.rdUser.id) {
+                        _this._authService.getIssues(_this.rdUser.api_key, _this.rdUser.id).then(function (res) {
+                            console.log(res);
+                            _this.issues = res.data.issues;
+                        });
+                    }
                 }, function (response) {
                     console.log(response);
                     _this.errorMsg = response.data.message;
@@ -272,6 +279,9 @@ var AuthService = (function () {
     }
     AuthService.prototype.loginRM = function (user) {
         return this.http.post("user", user);
+    };
+    AuthService.prototype.getIssues = function (key, id) {
+        return this.http.get("issues?key=" + key + "&id=" + id);
     };
     AuthService.prototype.getJson = function () {
         return this.http.get("user");
