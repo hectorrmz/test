@@ -10,7 +10,7 @@ export class HomeConfig {
                     content: {
                         templateUrl: 'home/home.tpl.html',
                         controller: 'HomeController',
-                        controllerAs: 'vm'
+                        controllerAs: '$hc'
                     }
                 }
             });

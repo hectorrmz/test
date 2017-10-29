@@ -9,7 +9,7 @@ export class LayoutConfig {
                 abstract: true,
                 templateUrl: 'layout/layout.tpl.html',
                 controller: LayoutController,
-                controllerAs: "vm"
+                controllerAs: "$layout"
             });
 
         urlRouterProvider.otherwise('/home');

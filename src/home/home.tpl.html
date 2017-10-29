@@ -1,3 +1,31 @@
 <div class="home">
-This is home view
+    <div class="jumbotron">
+        <div class="container text-center">
+            <h1>My Heroku App Test</h1>
+            <p>Some sub headline text as description..</p>
+        </div>
+    </div>
+
+    <div class="container-fluid bg-3 text-center">
+        <h3>Some Headline Here</h3>
+        
+
+        <form name="loginForm" class="col-md-5 text-left" novalidate ng-submit="$hc.login(loginForm)">
+            <div class="form-group">
+              <label for="exampleInputEmail1">Email address</label>
+              <input type="email" class="form-control" id="exampleInputEmail1" ng-model="$hc.username" aria-describedby="emailHelp" placeholder="Enter email" autofocus>
+              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Password</label>
+              <input type="password" class="form-control" id="exampleInputPassword1" ng-model="$hc.password" placeholder="Password">
+            </div>
+            <p class="text-danger small">{{$hc.errorMsg}}</p>
+           
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+
+
+    </div>
+    <br>
 </div>

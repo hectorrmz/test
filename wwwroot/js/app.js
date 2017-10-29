@@ -129,8 +129,10 @@ exports.LayoutModule = angular
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(0);
+var auth_service_1 = __webpack_require__(13);
 exports.ServicesModule = angular
     .module('app.services', [])
+    .service('AuthService', auth_service_1.AuthService)
     .constant('apiUrl', 'http://localhost')
     .name;
 
@@ -159,7 +161,7 @@ var HomeConfig = (function () {
                 content: {
                     templateUrl: 'home/home.tpl.html',
                     controller: 'HomeController',
-                    controllerAs: 'vm'
+                    controllerAs: '$hc'
                 }
             }
         });
@@ -187,12 +189,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var decorators_1 = __webpack_require__(1);
 var HomeController = (function () {
-    function HomeController() {
+    function HomeController(_authService) {
+        var _this = this;
+        this._authService = _authService;
+        this.login = function (form) {
+            if (form.$valid) {
+                _this.errorMsg = "";
+                var user = {
+                    username: _this.username,
+                    password: _this.password
+                };
+                _this._authService.loginRM(user).then(function (response) {
+                    console.log(response.data.user);
+                }, function (response) {
+                    console.log(response);
+                    _this.errorMsg = response.data.message;
+                });
+            }
+        };
     }
     HomeController.prototype.$onInit = function () { };
     HomeController.prototype.$onDestroy = function () { };
     HomeController = __decorate([
-        decorators_1.Inject()
+        decorators_1.Inject('AuthService')
     ], HomeController);
     return HomeController;
 }());
@@ -221,7 +240,7 @@ var LayoutConfig = (function () {
             abstract: true,
             templateUrl: 'layout/layout.tpl.html',
             controller: layout_controller_1.LayoutController,
-            controllerAs: "vm"
+            controllerAs: "$layout"
         });
         urlRouterProvider.otherwise('/home');
     }
@@ -235,6 +254,38 @@ exports.LayoutConfig = LayoutConfig;
 
 /***/ }),
 /* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decorators_1 = __webpack_require__(1);
+var AuthService = (function () {
+    function AuthService(http) {
+        this.http = http;
+    }
+    AuthService.prototype.loginRM = function (user) {
+        return this.http.post("user", user);
+    };
+    AuthService.prototype.getJson = function () {
+        return this.http.get("user");
+    };
+    AuthService = __decorate([
+        decorators_1.Inject('$http')
+    ], AuthService);
+    return AuthService;
+}());
+exports.AuthService = AuthService;
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -259,5 +310,5 @@ angular
 
 
 /***/ })
-],[13]);
+],[14]);
 //# sourceMappingURL=app.js.map
