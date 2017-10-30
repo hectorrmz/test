@@ -131,10 +131,12 @@ exports.LayoutModule = angular
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(1);
-var auth_service_1 = __webpack_require__(15);
+var auth_service_1 = __webpack_require__(16);
+var auth_helper_1 = __webpack_require__(15);
 exports.ServicesModule = angular
     .module('app.services', [])
     .service('AuthService', auth_service_1.AuthService)
+    .service('AuthHelper', auth_helper_1.AuthHelper)
     .constant('apiUrl', 'http://localhost')
     .name;
 
@@ -247,9 +249,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var decorators_1 = __webpack_require__(0);
 var HomeController = (function () {
-    function HomeController(_authService) {
+    function HomeController(_authService, _authHelper) {
         var _this = this;
         this._authService = _authService;
+        this._authHelper = _authHelper;
         this.login = function (form) {
             if (form.$valid) {
                 _this.errorMsg = "";
@@ -260,23 +263,39 @@ var HomeController = (function () {
                 _this._authService.loginRM(user).then(function (response) {
                     console.log(response.data.user);
                     _this.rdUser = response.data.user;
-                    if (_this.rdUser && _this.rdUser.id) {
-                        _this._authService.getIssues(_this.rdUser.api_key, _this.rdUser.id).then(function (res) {
-                            console.log(res);
-                            _this.issues = res.data.issues;
-                        });
-                    }
+                    _this._authHelper.AuthorizeUser(_this.rdUser);
+                    _this.getIssues();
                 }, function (response) {
                     console.log(response);
                     _this.errorMsg = response.data.message;
                 });
             }
         };
+        this.getIssues = function () {
+            var key = _this._authHelper.getAPIKey();
+            var id = _this._authHelper.getRMUserId();
+            var issueId;
+            if (_this._authHelper.isAuthorized()) {
+                _this._authService.getIssues(key, id).then(function (res) {
+                    console.log(res.data.issues);
+                    _this.issues = res.data.issues;
+                    if (_this.issues.length === 1) {
+                        issueId = _this.issues[0].id;
+                        var dateRange = "><2017-10-01|2017-10-15";
+                        _this._authService.getTimeEntries(key, id, issueId, dateRange).then(function (rsp) {
+                            _this.timeEntries = rsp.data.time_entries;
+                            console.log(_this.timeEntries);
+                        });
+                    }
+                });
+            }
+        };
+        this.getIssues();
     }
     HomeController.prototype.$onInit = function () { };
     HomeController.prototype.$onDestroy = function () { };
     HomeController = __decorate([
-        decorators_1.Inject('AuthService')
+        decorators_1.Inject('AuthService', 'AuthHelper')
     ], HomeController);
     return HomeController;
 }());
@@ -331,6 +350,64 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var decorators_1 = __webpack_require__(0);
+var AuthHelper = (function () {
+    function AuthHelper() {
+        var _this = this;
+        this.getAPIKey = function () {
+            return _this.apiKey;
+        };
+        this.setAPIKey = function (key) {
+            _this.session.setItem("api_key", key);
+            _this.apiKey = key;
+        };
+        this.getRMUserId = function () {
+            return _this.rmUserId;
+        };
+        this.setRMUserId = function (userId) {
+            _this.session.setItem("user_id", userId.toString());
+            _this.rmUserId = userId;
+        };
+        this.isAuthorized = function () {
+            if (!_this.apiKey || !_this.rmUserId) {
+                return false;
+            }
+            return true;
+        };
+        this.AuthorizeUser = function (user) {
+            _this.setAPIKey(user.api_key);
+            _this.setRMUserId(user.id);
+        };
+        this.logOutUser = function () {
+            _this.apiKey = "";
+            _this.rmUserId = 0;
+            _this.session.clear();
+        };
+        this.session = window.sessionStorage;
+        this.apiKey = this.session.getItem("api_key");
+        this.rmUserId = this.session.getItem("user_id") ? parseInt(this.session.getItem("user_id")) : 0;
+    }
+    AuthHelper = __decorate([
+        decorators_1.Inject()
+    ], AuthHelper);
+    return AuthHelper;
+}());
+exports.AuthHelper = AuthHelper;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decorators_1 = __webpack_require__(0);
 var AuthService = (function () {
     function AuthService(http) {
         this.http = http;
@@ -340,6 +417,9 @@ var AuthService = (function () {
     };
     AuthService.prototype.getIssues = function (key, id) {
         return this.http.get("issues?key=" + key + "&id=" + id);
+    };
+    AuthService.prototype.getTimeEntries = function (key, id, issueId, date) {
+        return this.http.get("times?key=" + key + "&id=" + id + "&issue_id=" + issueId + "&spend_on=" + date);
     };
     AuthService.prototype.getJson = function () {
         return this.http.get("user");
@@ -353,7 +433,7 @@ exports.AuthService = AuthService;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -378,5 +458,5 @@ angular
 
 
 /***/ })
-],[16]);
+],[17]);
 //# sourceMappingURL=app.js.map

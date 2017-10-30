@@ -14,7 +14,7 @@
 	app.use(bodyParser.urlencoded({ extended: false }))
 
 	// parse application/json
-	app.use(bodyParser.json())
+	app.use(bodyParser.json());
 
 
 	app.post("/user", function (req, res) {
@@ -54,8 +54,6 @@
 			res.status("401").send({ message: "Not Authorized" });
 		}
 
-		console.log(query)
-
 		var options = {
 			protocol: "https",
 			host: "dev.unosquare.com",
@@ -64,10 +62,42 @@
 		};
 
 		var jsonUrl = url.format(options);
+		request(jsonUrl).pipe(res);
+
+	});
+
+	app.get("/times", function (req, res) {
+
+		var url_parts = url.parse(req.url, true);
+		var query = url_parts.query;
+
+		if (!query.key && !query.id && !query.issue_id &&
+			!query.spend_on) {
+			res.status("401").send({ message: "Not Authorized" });
+		}
+
+		console.log(query);
+
+		var options = {
+			protocol: "https",
+			host: "dev.unosquare.com",
+			pathname: "/redmine/time_entries.json",
+			query: {
+				key: query.key,
+				issue_id: query.issue_id,
+				user_id: query.id,
+				spent_on: query.spend_on,
+				limit: 99
+			}
+		};
+
+		var jsonUrl = url.format(options);
 		console.log(jsonUrl);
 		request(jsonUrl).pipe(res);
 
 	});
+
+	process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
 	app.use(express.static(__dirname + "/wwwroot/"));
 
