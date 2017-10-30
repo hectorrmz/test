@@ -1,6 +1,5 @@
 webpackJsonp([0],[
-/* 0 */,
-/* 1 */
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19,6 +18,7 @@ exports.Inject = Inject;
 
 
 /***/ }),
+/* 1 */,
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -31,7 +31,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decorators_1 = __webpack_require__(1);
+var decorators_1 = __webpack_require__(0);
 var LayoutController = (function () {
     function LayoutController() {
         this.date = new Date();
@@ -60,7 +60,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decorators_1 = __webpack_require__(1);
+var decorators_1 = __webpack_require__(0);
 var AppConfig = (function () {
     function AppConfig() {
     }
@@ -94,9 +94,9 @@ exports.AppRun = AppRun;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var angular = __webpack_require__(0);
-var home_config_1 = __webpack_require__(10);
-var home_controller_1 = __webpack_require__(11);
+var angular = __webpack_require__(1);
+var home_config_1 = __webpack_require__(12);
+var home_controller_1 = __webpack_require__(13);
 exports.HomeModule = angular
     .module('test.home', ['ui.router'])
     .controller('HomeController', home_controller_1.HomeController)
@@ -111,12 +111,14 @@ exports.HomeModule = angular
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var angular = __webpack_require__(0);
-var layout_config_1 = __webpack_require__(12);
+var angular = __webpack_require__(1);
+var layout_config_1 = __webpack_require__(14);
 var layout_controller_1 = __webpack_require__(2);
+var calendar_directive_1 = __webpack_require__(11);
 exports.LayoutModule = angular
     .module('test.layout', ['ui.router'])
     .controller('LayoutController', layout_controller_1.LayoutController)
+    .directive("calendarTracker", calendar_directive_1.CalendarDirective)
     .config(layout_config_1.LayoutConfig)
     .name;
 
@@ -128,8 +130,8 @@ exports.LayoutModule = angular
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var angular = __webpack_require__(0);
-var auth_service_1 = __webpack_require__(13);
+var angular = __webpack_require__(1);
+var auth_service_1 = __webpack_require__(15);
 exports.ServicesModule = angular
     .module('app.services', [])
     .service('AuthService', auth_service_1.AuthService)
@@ -151,7 +153,63 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decorators_1 = __webpack_require__(1);
+var decorators_1 = __webpack_require__(0);
+var CalendarController = (function () {
+    function CalendarController() {
+    }
+    CalendarController.prototype.$onInit = function () { };
+    CalendarController.prototype.$onDestroy = function () { };
+    CalendarController = __decorate([
+        decorators_1.Inject()
+    ], CalendarController);
+    return CalendarController;
+}());
+exports.CalendarController = CalendarController;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var calendar_controller_1 = __webpack_require__(10);
+exports.CalendarDirective = function () {
+    return {
+        bindToController: true,
+        controllerAs: '$ctl',
+        controller: calendar_controller_1.CalendarController,
+        link: function (_scope) {
+            $('#calendar').fullCalendar({
+                defaultView: 'agendaWeek',
+                minTime: "08:00:00",
+                maxTime: "19:00:00",
+                weekends: false,
+                visibleRange: {
+                    start: '2017-10-1',
+                    end: '2017-11-1'
+                }
+            });
+        }
+    };
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decorators_1 = __webpack_require__(0);
 var HomeConfig = (function () {
     function HomeConfig(stateProvider) {
         stateProvider
@@ -175,7 +233,7 @@ exports.HomeConfig = HomeConfig;
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -187,7 +245,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decorators_1 = __webpack_require__(1);
+var decorators_1 = __webpack_require__(0);
 var HomeController = (function () {
     function HomeController(_authService) {
         var _this = this;
@@ -226,7 +284,7 @@ exports.HomeController = HomeController;
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -238,7 +296,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decorators_1 = __webpack_require__(1);
+var decorators_1 = __webpack_require__(0);
 var layout_controller_1 = __webpack_require__(2);
 var LayoutConfig = (function () {
     function LayoutConfig(stateProvider, urlRouterProvider) {
@@ -260,7 +318,7 @@ exports.LayoutConfig = LayoutConfig;
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -272,7 +330,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decorators_1 = __webpack_require__(1);
+var decorators_1 = __webpack_require__(0);
 var AuthService = (function () {
     function AuthService(http) {
         this.http = http;
@@ -295,13 +353,13 @@ exports.AuthService = AuthService;
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var angular = __webpack_require__(0);
+var angular = __webpack_require__(1);
 var app_config_1 = __webpack_require__(4);
 var app_run_1 = __webpack_require__(5);
 var services_module_1 = __webpack_require__(8);
@@ -320,5 +378,5 @@ angular
 
 
 /***/ })
-],[14]);
+],[16]);
 //# sourceMappingURL=app.js.map
