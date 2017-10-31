@@ -185,13 +185,41 @@ exports.CalendarDirective = function () {
         link: function (_scope) {
             $('#calendar').fullCalendar({
                 defaultView: 'agendaWeek',
-                minTime: "08:00:00",
-                maxTime: "19:00:00",
+                minTime: "01:00:00",
+                maxTime: "12:00:00",
                 weekends: false,
+                editable: true,
+                droppable: true,
                 visibleRange: {
                     start: '2017-10-1',
                     end: '2017-11-1'
+                },
+                eventClick: function (calEvent, _jsEvent, _view) {
+                    var title = prompt('Event Title:', calEvent.title);
+                    if (title) {
+                        calEvent.title = title;
+                        $('#calendar').fullCalendar('updateEvent', calEvent);
+                    }
+                },
+                drop: function (_date, event) {
+                    var title = prompt('Event Title:', event.title);
+                    if (title) {
+                        event.title = title;
+                        $('#calendar').fullCalendar('updateEvent', event);
+                    }
                 }
+            });
+            $('div.external-event').each(function () {
+                console.log("external event");
+                $(this).data('event', {
+                    title: $.trim($(this).text()),
+                    stick: true
+                });
+                $(this).draggable({
+                    zIndex: 1000,
+                    revert: true,
+                    revertDuration: 0
+                });
             });
         }
     };
@@ -253,6 +281,7 @@ var HomeController = (function () {
         var _this = this;
         this._authService = _authService;
         this._authHelper = _authHelper;
+        this.events = [];
         this.login = function (form) {
             if (form.$valid) {
                 _this.errorMsg = "";
@@ -277,17 +306,56 @@ var HomeController = (function () {
             var issueId;
             if (_this._authHelper.isAuthorized()) {
                 _this._authService.getIssues(key, id).then(function (res) {
-                    console.log(res.data.issues);
                     _this.issues = res.data.issues;
                     if (_this.issues.length === 1) {
                         issueId = _this.issues[0].id;
-                        var dateRange = "><2017-10-01|2017-10-15";
-                        _this._authService.getTimeEntries(key, id, issueId, dateRange).then(function (rsp) {
-                            _this.timeEntries = rsp.data.time_entries;
-                            console.log(_this.timeEntries);
-                        });
+                        _this.getTimes(key, id, issueId);
                     }
                 });
+            }
+        };
+        this.getTimes = function (key, id, issueId) {
+            var dateRange = "><2017-10-01|2017-10-15";
+            _this._authService.getTimeEntries(key, id, issueId, dateRange).then(function (rsp) {
+                _this.timeEntries = rsp.data.time_entries;
+                console.log(_this.timeEntries);
+                _this.renderRedMineEvents();
+            });
+        };
+        this.renderRedMineEvents = function () {
+            var currentDate = "";
+            var initialHour;
+            _this.timeEntries.forEach(function (time) {
+                var event = {};
+                event.title = time.comments;
+                if (time.activity.id === 72) {
+                    event.allDay = true;
+                    event.start = time.spent_on;
+                }
+                else {
+                    if (currentDate != time.spent_on) {
+                        currentDate = time.spent_on;
+                        initialHour = 6;
+                    }
+                    event.start = new Date(time.spent_on);
+                    event.start = event.start["addHours"](initialHour);
+                    initialHour = initialHour + time.hours;
+                    event.end = new Date(time.spent_on);
+                    event.end = event.end["addHours"](initialHour);
+                }
+                event.color = _this.setEventColor(time.activity.id);
+                console.log(event);
+                _this.events.push(event);
+            });
+            $('#calendar').fullCalendar('addEventSource', _this.events);
+        };
+        this.setEventColor = function (activity) {
+            switch (activity) {
+                case 9: return "#269900";
+                case 10: return "#668cff";
+                case 72: return "#FFFFFF";
+                case 72: return "#ffa64d";
+                default: return "#ffd480";
             }
         };
         this.getIssues();
