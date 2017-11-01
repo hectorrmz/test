@@ -7,8 +7,8 @@
     </div>
 
     <div class="week" ng-repeat="week in $hc.weeks">
-        <div class="weekday" ng-repeat="day in week.weekDays">
-            <header>{{day.name}} {{day.number}}</header>
+        <div class="weekday" ng-repeat="day in week.weekDays;" ng-hide="day.day===0 || day.day===6" ng-class="{'no-active': !day.date}">
+            <header>{{day.name}} {{day.date}}</header>
             <div class="day">
 
             </div>
@@ -51,19 +51,19 @@
 
 
         <div class="calendarBox col-lg-8 col-md-9 text-left">
-                <div class="ibox-content">
-                        <div id='external-events'>
-                            <p>Drag a event and drop into calendar.</p>
-                            <div id="evt1" class='external-event navy-bg'>Development.</div>
-                            <div id="evt2" class='external-event navy-bg'>Meetings.</div>
-                            <div id="evt3" class='external-event navy-bg'>Other.</div>
-                            <div id="evt4" class='external-event navy-bg'>Something Else.</div>
-                            <div id="evt5" class='external-event navy-bg'>One more for luck.</div>
-                        </div>
-                    </div>
+            <div class="ibox-content">
+                <div id='external-events'>
+                    <p>Drag a event and drop into calendar.</p>
+                    <div id="evt1" class='external-event navy-bg'>Development.</div>
+                    <div id="evt2" class='external-event navy-bg'>Meetings.</div>
+                    <div id="evt3" class='external-event navy-bg'>Other.</div>
+                    <div id="evt4" class='external-event navy-bg'>Something Else.</div>
+                    <div id="evt5" class='external-event navy-bg'>One more for luck.</div>
+                </div>
+            </div>
             <div calendar-tracker id='calendar'></div>
         </div>
 
-        
+
     </div>
 </div>

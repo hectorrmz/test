@@ -2,8 +2,9 @@ import { Inject } from '../decorators/decorators';
 import { IAuthService } from '../services/auth.service';
 
 declare interface weekDay {
-    name: string;
-    number?: number
+    name: string; // S-M-T-W-T-F-S
+    date?: number; //1-31
+    day: number; //0-6
 }
 
 class weekObject {
@@ -12,15 +13,14 @@ class weekObject {
     constructor() {
         var days = ["Sunday", "Monday", "Tuesday", "Wendesday", "Thursday", "Friday", "Saturday"];
 
-        days.forEach((day: string) => {
-            this.weekDays.push({ name: day });
+        days.forEach((dayName: string, index: number) => {
+            this.weekDays.push({ name: dayName, day: index });
         });
     }
 }
 
 @Inject('AuthService', 'AuthHelper')
 export class HomeController {
-
     public username: string;
     public password: string;
     public errorMsg: string;
@@ -34,10 +34,7 @@ export class HomeController {
 
     constructor(private _authService: IAuthService, private _authHelper: IAuthHelper) {
         this.getIssues();
-
-
         this.setdaysRange();
-
     }
 
     private setdaysRange() {
@@ -53,12 +50,12 @@ export class HomeController {
             var dayNumber = initial.getDate(); // date 1
             var skip = false;
             while (end > dayNumber) {
-                var weekObj = new weekObject();               
+                var weekObj = new weekObject();
 
                 weekObj.weekDays.forEach((day, index) => {
 
-                    if ((index >= initialNumber || skip) && dayNumber<= end) {
-                        day.number = dayNumber;
+                    if ((index >= initialNumber || skip) && dayNumber <= end) {
+                        day.date = dayNumber;
                         dayNumber++;
                     }
                     console.log(day, index);
@@ -83,12 +80,12 @@ export class HomeController {
             var skip = false;
             while (end > dayNumber) {
                 var weekObj = new weekObject();
-                
+
 
                 weekObj.weekDays.forEach((day, index) => {
 
-                    if ((index >= initialNumber || skip) && dayNumber<= end) {
-                        day.number = dayNumber;
+                    if ((index >= initialNumber || skip) && dayNumber <= end) {
+                        day.date = dayNumber;
                         dayNumber++;
                     }
                     console.log(day, index);
