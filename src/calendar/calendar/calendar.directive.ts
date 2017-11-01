@@ -33,7 +33,7 @@ export const CalendarDirective = (): ng.IDirective => {
 
                     if (title) {
                         event.title = title;
-                        (<any>$('#calendar')).fullCalendar('updateEvent', event);
+                        //(<any>$('#calendar')).fullCalendar('addEventSource', event);
                     }
                 }
             });

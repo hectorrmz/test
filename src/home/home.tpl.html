@@ -6,6 +6,15 @@
         </div>
     </div>
 
+    <div class="week" ng-repeat="week in $hc.weeks">
+        <div class="weekday" ng-repeat="day in week.weekDays">
+            <header>{{day.name}} {{day.number}}</header>
+            <div class="day">
+
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid bg-3 text-center" ng-hide="$hc.issues">
         <h3>Some Headline Here</h3>
 

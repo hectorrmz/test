@@ -1,6 +1,23 @@
 import { Inject } from '../decorators/decorators';
 import { IAuthService } from '../services/auth.service';
 
+declare interface weekDay {
+    name: string;
+    number?: number
+}
+
+class weekObject {
+    weekDays: Array<weekDay> = [];
+
+    constructor() {
+        var days = ["Sunday", "Monday", "Tuesday", "Wendesday", "Thursday", "Friday", "Saturday"];
+
+        days.forEach((day: string) => {
+            this.weekDays.push({ name: day });
+        });
+    }
+}
+
 @Inject('AuthService', 'AuthHelper')
 export class HomeController {
 
@@ -12,8 +29,78 @@ export class HomeController {
     public timeEntries: Array<ITimeEntry>;
     public events: Array<any> = [];
 
+    public weeks: Array<weekObject> = [];
+
+
     constructor(private _authService: IAuthService, private _authHelper: IAuthHelper) {
         this.getIssues();
+
+
+        this.setdaysRange();
+
+    }
+
+    private setdaysRange() {
+        var now = new Date();
+
+        if (now.getDate() <= 15) {
+
+            var initial = new Date(`${now.getMonth() + 1}-1-${now.getFullYear()}`);
+            var end: number = 15;
+            console.log(initial);
+
+            var initialNumber: number = initial.getDay(); // 0-6
+            var dayNumber = initial.getDate(); // date 1
+            var skip = false;
+            while (end > dayNumber) {
+                var weekObj = new weekObject();               
+
+                weekObj.weekDays.forEach((day, index) => {
+
+                    if ((index >= initialNumber || skip) && dayNumber<= end) {
+                        day.number = dayNumber;
+                        dayNumber++;
+                    }
+                    console.log(day, index);
+                });
+
+                skip = true;
+
+                this.weeks.push(weekObj);
+            }
+
+            console.log(this.weeks);
+
+
+        } else {
+
+            var initial = new Date(`${now.getMonth() + 1}-16-${now.getFullYear()}`);
+            var end = 31;
+            console.log(initial);
+
+            var initialNumber: number = initial.getDay(); // 0-6
+            var dayNumber = initial.getDate(); // date 16-31
+            var skip = false;
+            while (end > dayNumber) {
+                var weekObj = new weekObject();
+                
+
+                weekObj.weekDays.forEach((day, index) => {
+
+                    if ((index >= initialNumber || skip) && dayNumber<= end) {
+                        day.number = dayNumber;
+                        dayNumber++;
+                    }
+                    console.log(day, index);
+                });
+
+                skip = true;
+
+                this.weeks.push(weekObj);
+            }
+
+            console.log(this.weeks);
+        }
     }
 
     public login = (form: ng.IFormController) => {
@@ -64,7 +151,7 @@ export class HomeController {
 
     private getTimes = (key: string, id: number, issueId: number) => {
 
-        let dateRange = "><2017-10-01|2017-10-15";
+        let dateRange = "><2017-10-01|2017-10-31";
 
         this._authService.getTimeEntries(key, id, issueId, dateRange).then((rsp: any) => {
             this.timeEntries = rsp.data.time_entries;
@@ -122,6 +209,7 @@ export class HomeController {
         switch (activity) {
             case 9: return "#269900";
             case 10: return "#668cff";
+            case 14: return "#ce7fd8";
             case 72: return "#FFFFFF";
             case 72: return "#ffa64d";
             default: return "#ffd480";

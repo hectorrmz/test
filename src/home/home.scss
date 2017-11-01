@@ -9,4 +9,23 @@
         margin:0 auto;
     }
 
+    .week{
+        display: flex;
+        justify-content: space-between;
+        width: 70%;
+        margin: 25px auto;
+
+        .weekday{
+            width: 14.28%;
+            border: 1px solid #dedede;
+            min-height: 400px;
+
+            header{
+                text-align: center;
+                border-bottom: 1px solid #dedede;
+            }
+        }
+
+    }
+
 }

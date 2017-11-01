@@ -205,7 +205,6 @@ exports.CalendarDirective = function () {
                     var title = prompt('Event Title:', event.title);
                     if (title) {
                         event.title = title;
-                        $('#calendar').fullCalendar('updateEvent', event);
                     }
                 }
             });
@@ -276,12 +275,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var decorators_1 = __webpack_require__(0);
+var weekObject = (function () {
+    function weekObject() {
+        var _this = this;
+        this.weekDays = [];
+        var days = ["Sunday", "Monday", "Tuesday", "Wendesday", "Thursday", "Friday", "Saturday"];
+        days.forEach(function (day) {
+            _this.weekDays.push({ name: day });
+        });
+    }
+    return weekObject;
+}());
 var HomeController = (function () {
     function HomeController(_authService, _authHelper) {
         var _this = this;
         this._authService = _authService;
         this._authHelper = _authHelper;
         this.events = [];
+        this.weeks = [];
         this.login = function (form) {
             if (form.$valid) {
                 _this.errorMsg = "";
@@ -315,7 +326,7 @@ var HomeController = (function () {
             }
         };
         this.getTimes = function (key, id, issueId) {
-            var dateRange = "><2017-10-01|2017-10-15";
+            var dateRange = "><2017-10-01|2017-10-31";
             _this._authService.getTimeEntries(key, id, issueId, dateRange).then(function (rsp) {
                 _this.timeEntries = rsp.data.time_entries;
                 console.log(_this.timeEntries);
@@ -353,13 +364,60 @@ var HomeController = (function () {
             switch (activity) {
                 case 9: return "#269900";
                 case 10: return "#668cff";
+                case 14: return "#ce7fd8";
                 case 72: return "#FFFFFF";
                 case 72: return "#ffa64d";
                 default: return "#ffd480";
             }
         };
         this.getIssues();
+        this.setdaysRange();
     }
+    HomeController.prototype.setdaysRange = function () {
+        var now = new Date();
+        if (now.getDate() <= 15) {
+            var initial = new Date(now.getMonth() + 1 + "-1-" + now.getFullYear());
+            var end = 15;
+            console.log(initial);
+            var initialNumber = initial.getDay();
+            var dayNumber = initial.getDate();
+            var skip = false;
+            while (end > dayNumber) {
+                var weekObj = new weekObject();
+                weekObj.weekDays.forEach(function (day, index) {
+                    if ((index >= initialNumber || skip) && dayNumber <= end) {
+                        day.number = dayNumber;
+                        dayNumber++;
+                    }
+                    console.log(day, index);
+                });
+                skip = true;
+                this.weeks.push(weekObj);
+            }
+            console.log(this.weeks);
+        }
+        else {
+            var initial = new Date(now.getMonth() + 1 + "-16-" + now.getFullYear());
+            var end = 31;
+            console.log(initial);
+            var initialNumber = initial.getDay();
+            var dayNumber = initial.getDate();
+            var skip = false;
+            while (end > dayNumber) {
+                var weekObj = new weekObject();
+                weekObj.weekDays.forEach(function (day, index) {
+                    if ((index >= initialNumber || skip) && dayNumber <= end) {
+                        day.number = dayNumber;
+                        dayNumber++;
+                    }
+                    console.log(day, index);
+                });
+                skip = true;
+                this.weeks.push(weekObj);
+            }
+            console.log(this.weeks);
+        }
+    };
     HomeController.prototype.$onInit = function () { };
     HomeController.prototype.$onDestroy = function () { };
     HomeController = __decorate([
