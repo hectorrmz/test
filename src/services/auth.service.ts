@@ -13,8 +13,13 @@ export class AuthService implements IAuthService {
         return this.http.get("issues?key=" + key + "&id=" + id);
     }
 
-    public getTimeEntries(key: string, id: number, issueId: number, date: string) {
-        return this.http.get(`times?key=${key}&id=${id}&issue_id=${issueId}&spend_on=${date}`);
+    public getTimeEntries(key: string, id: number, date: string, issueId: number,) {
+        if(issueId){
+            return this.http.get(`times?key=${key}&id=${id}&issue_id=${issueId}&spend_on=${date}`);
+        }else{
+            return this.http.get(`times?key=${key}&id=${id}&spend_on=${date}`);
+        }
+        
     }
 
     public getJson() {
@@ -26,5 +31,5 @@ export interface IAuthService {
     getJson: () => ng.IPromise<any>;
     loginRM: (user: IAuth) => ng.IPromise<any>;
     getIssues: (token: string, id: number) => ng.IPromise<any>;
-    getTimeEntries: (key: string, id: number, issueId: number, date: string) => ng.IPromise<any>;
+    getTimeEntries: (key: string, id: number, date: string, issueId?: number,) => ng.IPromise<any>;
 }

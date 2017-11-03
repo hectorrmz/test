@@ -2,6 +2,8 @@ import { Inject } from '../decorators/decorators';
 import { IAuthService } from '../services/auth.service';
 import * as moment from 'moment';
 
+import {TimeItem} from '../typings/TimeItem';
+
 declare interface weekDay {
     name: string; // S-M-T-W-T-F-S
     date?: number; //1-31
@@ -20,7 +22,7 @@ class weekObject {
     }
 }
 
-@Inject('AuthService', 'AuthHelper')
+@Inject('$scope', 'AuthService', 'AuthHelper', '$uibModal')
 export class HomeController {
     public username: string;
     public password: string;
@@ -31,10 +33,10 @@ export class HomeController {
     public events: Array<any> = [];
 
     public weeks: Array<weekObject> = [];
-    public entries: Array<any> = [];
+    public entries: Array<TimeItem> = [];
 
 
-    constructor(private _authService: IAuthService, private _authHelper: IAuthHelper) {
+    constructor(private _scope:ng.IScope, private _authService: IAuthService, private _authHelper: IAuthHelper, private _uibModal: ng.ui.bootstrap.IModalService) {
         this.getIssues();
         this.setdaysRange();
     }
@@ -113,18 +115,28 @@ export class HomeController {
 
                     this.getTimes(key, id, issueId);
                 }
+                else {
+                    this.getTimes(key, id);
+                }
             });
         }
     };
 
-    private getTimes = (key: string, id: number, issueId: number) => {
+    private getTimes = (key: string, id: number, issueId?: number) => {
 
-        let dateRange = "><2017-11-01|2017-11-30";
 
-        this._authService.getTimeEntries(key, id, issueId, dateRange).then((rsp: any) => {
+        var today = new Date();
+
+        var currentMont = today.getMonth();
+        var currentYear = today.getFullYear();
+
+        var lastDayInMonth = this.daysInMonth(currentMont, currentYear);
+
+        let dateRange = `><${currentYear}-${currentMont+1}-01|${currentYear}-${currentMont+1}-${lastDayInMonth}`;
+
+        this._authService.getTimeEntries(key, id, dateRange, issueId).then((rsp: any) => {
             this.timeEntries = rsp.data.time_entries;
             //console.log(this.timeEntries);
-            this.renderRedMineEvents();
             this.createTimeEntries();
         });
 
@@ -137,7 +149,7 @@ export class HomeController {
 
             var date = moment(time.spent_on).date();
 
-            var entry = {
+            var entry: TimeItem = {
                 title: time.comments,
                 duration: time.hours,
                 date: date,
@@ -149,48 +161,25 @@ export class HomeController {
 
     }
 
-    private renderRedMineEvents = () => {
+    public addTime(date: number){
+        console.log(date);
 
-        var currentDate: string = "";
-        var initialHour: number;
-
-        this.timeEntries.forEach((time: ITimeEntry) => {
-
-            var event: any = {};
-
-            event.title = time.comments;
-
-            if (time.activity.id === 72) {
-                event.allDay = true;
-                event.start = time.spent_on;
+        var modalInstance = this._uibModal.open({
+            animation: true,
+            templateUrl: 'home/time-form.html',
+            controller: "ModalController as md",
+            scope: this._scope,
+            resolve: {
+                date: date
             }
+          });
 
-            else {
-                if (currentDate != time.spent_on) {
-                    currentDate = time.spent_on;
-                    initialHour = 6;
-                }
+          modalInstance.result.then(function (_selectedItem) {
 
-                event.start = new Date(time.spent_on);
-                event.start = event.start["addHours"](initialHour);
+          }, function () {
 
-                initialHour = initialHour + time.hours;
-
-                event.end = new Date(time.spent_on);
-                event.end = event.end["addHours"](initialHour);
-            }
-
-            event.color = this.setEventColor(time.activity.id);
-
-            //console.log(event);
-
-            this.events.push(event);
-        });
-
-        (<any>$('#calendar')).fullCalendar('addEventSource', this.events);
-
-
-    };
+          });
+    }
 
     public getTotal(date: number): number {
         var total: number = 0;
@@ -205,17 +194,6 @@ export class HomeController {
 
         return total;
     }
-
-    private setEventColor = (activity: number) => {
-        switch (activity) {
-            case 9: return "#269900";
-            case 10: return "#668cff";
-            case 14: return "#ce7fd8";
-            case 72: return "#FFFFFF";
-            case 72: return "#ffa64d";
-            default: return "#ffd480";
-        }
-    };
 
     private daysInMonth(month: number, year: number) {
         return 32 - new Date(year, month, 32).getDate();

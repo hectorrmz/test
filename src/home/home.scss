@@ -78,10 +78,25 @@
                 position: absolute;
                 bottom: 0;
                 width: 100%;
-                text-align: right;
                 background: rgba(204, 204, 204, 0.8);
-                padding: 2px 12px;
+                padding: 5px 12px;
                 font-size: 13px;
+                display: flex;
+                justify-content: space-between;
+
+
+                .add-btn{
+                    background: #7bcc4a;
+                    color: white;
+                    padding: 2px 7px;
+                    border-radius: 15px;
+                    font-size: 12px;
+                    cursor: pointer;
+
+                    &:hover{
+                        background:#99d277
+                    }
+                }
             }
 
             &.no-active{
@@ -153,3 +168,17 @@
     }
     }
 }
+
+.modal-open .modal{
+    opacity: 1;
+}
+
+.modal-backdrop.fade{
+    opacity: .5
+}
+
+.modal-content{
+    top:200px;
+}
+
+

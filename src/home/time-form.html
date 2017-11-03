@@ -1,0 +1,30 @@
+<div class="modal-header modal-header-primary">
+
+    <h2>Add new Time Entry</h2>
+</div>
+<div class="modal-body">
+    <div class="col-md-12">
+        <div class="table-responsive">
+
+            <label>Title</label>
+            <input name="title" type="text" class="form-control" ng-model="md.time.title">
+            <label>Hours</label>
+            <input name="hour" type="number" class="form-control" ng-model="md.time.hours">
+
+            <label>Activity</label>
+            <select class="form-control" ng-model="md.time.activity">
+                <option value="9" selected>Development</option>
+                <option value="12">Meeting</option>
+                <option value="14">Research</option>
+                <option value="72">Design</option>
+            </select>
+
+            <label class="small">Hours to complete day: {{ $hc.getTotal() }}</label>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-click="md.close()" data-dismiss="modal">Cancel</button>
+    <button type="button" class="btn btn-primary pull-right" ng-click="md.save()" data-next="modal">Save</button>
+</div>

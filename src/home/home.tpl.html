@@ -31,10 +31,10 @@
             <h2 class="text-center">{{$hc.issues[0].project.name}}</h2>
 
             <div class="issues-options">
-                Here will be the issues
+                <h3>Issues Assigned:</h3>
 
                 <div class="issue" ng-repeat="issue in $hc.issues">
-                    {{issue.subject}}
+                    {{issue.project.name}} : {{issue.subject}}
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
                     <div class="weekday" ng-repeat="day in week.weekDays;" ng-hide="day.day===0 || day.day===6" ng-class="{'no-active': !day.date}">
                         <header>{{day.name}} {{day.date}}</header>
                         <div class="day">
-                            <div class="time activity-{{time.activity.id}}" ng-if="day.date" ng-repeat="time in $hc.entries | filter: {date: day.date}: true ">
+                            <div class="time activity-{{time.activity.id}}" ng-if="day.date" ng-repeat="time in  $hc.entries | filter: {date: day.date}: true ">
                                 <span>{{time.title}}</span>
 
                                 <div>
@@ -58,6 +58,7 @@
                             </div>
                         </div>
                         <div class="day-footer" ng-if="day.date">
+                            <div class="add-btn" ng-click="$hc.addTime(day.date)">+</div>
                             <span>Total: {{$hc.getTotal(day.date)}}</span>
                         </div>
                     </div>

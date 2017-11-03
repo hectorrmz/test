@@ -9,6 +9,9 @@ angular
     .module('app', [
         'app.tpls',
         'ui.router',
+        'ui.bootstrap',
+        'ngAnimate',
+
         ServicesModule,
         LayoutModule,
         HomeModule
