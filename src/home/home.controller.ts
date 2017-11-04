@@ -1,8 +1,11 @@
 import { Inject } from '../decorators/decorators';
-import { IAuthService } from '../services/auth.service';
 import * as moment from 'moment';
 
-import {TimeItem} from '../typings/TimeItem';
+import { TimeItem } from '../models/TimeItem';
+import { TimeEntry } from '../models/TimeEntry';
+import { Activity } from '../models/Activity';
+import { AuthHelper } from '../services/auth.helper';
+import { RedmineService } from '../services/redmine.service';
 
 declare interface weekDay {
     name: string; // S-M-T-W-T-F-S
@@ -22,29 +25,29 @@ class weekObject {
     }
 }
 
-@Inject('$scope', 'AuthService', 'AuthHelper', '$uibModal')
+@Inject('$scope', '$state', 'RedmineService', 'AuthHelper', '$uibModal')
 export class HomeController {
-    public username: string;
-    public password: string;
-    public errorMsg: string;
-    public rdUser: IRDUser;
+
+    isLoaded = false;
+
     public issues: Array<any>;
-    public timeEntries: Array<ITimeEntry>;
+    public timeEntries: Array<TimeEntry>;
     public events: Array<any> = [];
 
     public weeks: Array<weekObject> = [];
     public entries: Array<TimeItem> = [];
 
-    public activities: Array<IActivity> = [];
+    public activities: Array<Activity> = [];
 
 
 
 
-    constructor(private _scope:ng.IScope, private _authService: IAuthService, private _authHelper: IAuthHelper, private _uibModal: ng.ui.bootstrap.IModalService) {
-        this.getIssues();
-        this.setdaysRange();
-        this.getActivities();
-    }
+    constructor(
+        private _scope: ng.IScope,
+        private _state: ng.ui.IStateService,
+        private _redmineService: RedmineService,
+        private _authHelper: AuthHelper,
+        private _uibModal: ng.ui.bootstrap.IModalService) { }
 
     private setdaysRange() {
         var now = new Date();
@@ -78,34 +81,6 @@ export class HomeController {
         console.log(this.weeks);
     }
 
-    public login = (form: ng.IFormController) => {
-
-        if (form.$valid) {
-
-            this.errorMsg = "";
-
-            let user: IAuth = {
-                username: this.username,
-                password: this.password
-            };
-
-            this._authService.loginRM(user).then((response: any) => {
-                //console.log(response.data.user);
-
-                this.rdUser = response.data.user;
-                this._authHelper.AuthorizeUser(this.rdUser);
-
-                this.getIssues();
-                this.getActivities();
-                
-
-            }, (response) => {
-                //console.log(response);
-                this.errorMsg = response.data.message;
-            });
-        }
-    };
-
     private getIssues = () => {
 
         let key: string = this._authHelper.getAPIKey();
@@ -113,9 +88,10 @@ export class HomeController {
         let issueId: number;
 
         if (this._authHelper.isAuthorized()) {
-            this._authService.getIssues(key, id).then((res: any) => {
+            this._redmineService.getIssues(key, id).then((res: any) => {
 
                 this.issues = res.data.issues;
+                
 
                 if (this.issues.length === 1) {
                     issueId = this.issues[0].id;
@@ -130,16 +106,16 @@ export class HomeController {
     };
 
     private getActivities = () => {
-        
-                let key: string = this._authHelper.getAPIKey();
-        
-                if (this._authHelper.isAuthorized()) {
-                    this._authService.getActivities(key).then((res: any) => {
-        
-                        this.activities = res.data.time_entry_activities;
-                    });
-                }
-            };
+
+        let key: string = this._authHelper.getAPIKey();
+
+        if (this._authHelper.isAuthorized()) {
+            this._redmineService.getActivities(key).then((res: any) => {
+
+                this.activities = res.data.time_entry_activities;
+            });
+        }
+    };
 
     private getTimes = (key: string, id: number, issueId?: number) => {
 
@@ -151,10 +127,11 @@ export class HomeController {
 
         var lastDayInMonth = this.daysInMonth(currentMont, currentYear);
 
-        let dateRange = `><${currentYear}-${currentMont+1}-01|${currentYear}-${currentMont+1}-${lastDayInMonth}`;
+        let dateRange = `><${currentYear}-${currentMont + 1}-01|${currentYear}-${currentMont + 1}-${lastDayInMonth}`;
 
-        this._authService.getTimeEntries(key, id, dateRange, issueId).then((rsp: any) => {
+        this._redmineService.getTimeEntries(key, id, dateRange, issueId).then((rsp: any) => {
             this.timeEntries = rsp.data.time_entries;
+            this.isLoaded = true;
             //console.log(this.timeEntries);
             this.createTimeEntries();
         });
@@ -164,7 +141,7 @@ export class HomeController {
 
     private createTimeEntries() {
 
-        this.timeEntries.forEach((time: ITimeEntry) => {
+        this.timeEntries.forEach((time: TimeEntry) => {
 
             var date = moment(time.spent_on).date();
 
@@ -180,7 +157,7 @@ export class HomeController {
 
     }
 
-    public addTime(date: number){
+    public addTime(date: number) {
         console.log(date);
 
         var modalInstance = this._uibModal.open({
@@ -190,13 +167,13 @@ export class HomeController {
             resolve: {
                 date: date
             }
-          });
+        });
 
-          modalInstance.result.then(function (_selectedItem) {
+        modalInstance.result.then(function (_selectedItem) {
 
-          }, function () {
+        }, function () {
 
-          });
+        });
     }
 
     public getTotal(date: number): number {
@@ -218,7 +195,16 @@ export class HomeController {
     }
 
     /** Initializes the controller. */
-    $onInit(): void { }
+    $onInit(): void {
+        if (this._authHelper.isAuthorized()) {
+            this.getIssues();
+            this.setdaysRange();
+            this.getActivities();
+        } else {
+            this._state.go("app.login");
+        }
+
+    }
 
     /** Cleans up the controller. */
     $onDestroy(): void { }

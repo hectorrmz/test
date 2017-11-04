@@ -1,7 +1,8 @@
 import { Inject } from '../decorators/decorators';
+import { RMUser } from '../models/RDUser';
 
 @Inject()
-export class AuthHelper implements IAuthHelper {
+export class AuthHelper {
 
     private session: Storage;
     private apiKey: string;
@@ -39,7 +40,7 @@ export class AuthHelper implements IAuthHelper {
         return true;
     };
 
-    public AuthorizeUser = (user: IRDUser): void => {
+    public AuthorizeUser = (user: RMUser): void => {
         this.setAPIKey(user.api_key);
         this.setRMUserId(user.id);
     };

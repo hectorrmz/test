@@ -1,40 +1,12 @@
 import { Inject } from '../decorators/decorators';
+import { Auth } from '../models/Auth';
 
 @Inject('$http')
-export class AuthService implements IAuthService {
+export class AuthService {
     constructor(private http: ng.IHttpService) {
     }
 
-    public loginRM(user: IAuth) {
+    public loginRM(user: Auth) {
         return this.http.post("user", user);
     }
-
-    public getIssues(key: string, id: number) {
-        return this.http.get("issues?key=" + key + "&id=" + id);
-    }
-
-    public getActivities(key: string) {
-        return this.http.get("activities?key=" + key);
-    }
-
-    public getTimeEntries(key: string, id: number, date: string, issueId: number,) {
-        if(issueId){
-            return this.http.get(`times?key=${key}&id=${id}&issue_id=${issueId}&spend_on=${date}`);
-        }else{
-            return this.http.get(`times?key=${key}&id=${id}&spend_on=${date}`);
-        }
-        
-    }
-
-    public getJson() {
-        return this.http.get("user");
-    }
-}
-
-export interface IAuthService {
-    getJson: () => ng.IPromise<any>;
-    loginRM: (user: IAuth) => ng.IPromise<any>;
-    getIssues: (token: string, id: number) => ng.IPromise<any>;
-    getTimeEntries: (key: string, id: number, date: string, issueId?: number,) => ng.IPromise<any>;
-    getActivities: (key: string) => ng.IPromise<any>;
 }

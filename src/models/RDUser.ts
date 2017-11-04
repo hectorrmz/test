@@ -1,4 +1,4 @@
-declare interface IRDUser {
+export interface RMUser {
     api_key: string;
     created_on: string;
     firstname: string;

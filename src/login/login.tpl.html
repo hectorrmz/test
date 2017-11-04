@@ -1,0 +1,21 @@
+<div class="login">
+    <div class="container-fluid bg-3 text-center" ng-hide="$lc.issues">
+        <h3>Some Headline Here</h3>
+    
+        <form name="loginForm" class="col-xl-3 col-lg-4 col-md-6 col-sm-9 text-left loginForm" novalidate ng-submit="$lc.login(loginForm)">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" ng-model="$lc.username" aria-describedby="emailHelp" placeholder="Enter email"
+                    autofocus>
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" ng-model="$lc.password" placeholder="Password">
+            </div>
+            <p class="text-danger small">{{$lc.errorMsg}}</p>
+    
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>

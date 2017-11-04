@@ -69,9 +69,9 @@ exports.AppRun = AppRun;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var home_config_1 = __webpack_require__(135);
-var home_controller_1 = __webpack_require__(136);
-var modal_controller_1 = __webpack_require__(137);
+var home_config_1 = __webpack_require__(134);
+var home_controller_1 = __webpack_require__(135);
+var modal_controller_1 = __webpack_require__(136);
 exports.HomeModule = angular
     .module('test.home', ['ui.router'])
     .controller('HomeController', home_controller_1.HomeController)
@@ -89,13 +89,11 @@ exports.HomeModule = angular
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var layout_config_1 = __webpack_require__(138);
+var layout_config_1 = __webpack_require__(137);
 var layout_controller_1 = __webpack_require__(3);
-var calendar_directive_1 = __webpack_require__(134);
 exports.LayoutModule = angular
     .module('test.layout', ['ui.router'])
     .controller('LayoutController', layout_controller_1.LayoutController)
-    .directive("calendarTracker", calendar_directive_1.CalendarDirective)
     .config(layout_config_1.LayoutConfig)
     .name;
 
@@ -109,104 +107,39 @@ exports.LayoutModule = angular
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var auth_service_1 = __webpack_require__(140);
-var auth_helper_1 = __webpack_require__(139);
+var login_config_1 = __webpack_require__(138);
+var login_controller_1 = __webpack_require__(139);
+exports.LoginModule = angular
+    .module('test.login', ['ui.router'])
+    .controller('LoginController', login_controller_1.LoginController)
+    .config(login_config_1.LoginConfig)
+    .name;
+
+
+/***/ }),
+
+/***/ 130:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var angular = __webpack_require__(2);
+var auth_service_1 = __webpack_require__(141);
+var auth_helper_1 = __webpack_require__(140);
+var redmine_service_1 = __webpack_require__(142);
 exports.ServicesModule = angular
     .module('app.services', [])
     .service('AuthService', auth_service_1.AuthService)
     .service('AuthHelper', auth_helper_1.AuthHelper)
+    .service('RedmineService', redmine_service_1.RedmineService)
     .constant('apiUrl', 'http://localhost')
     .name;
 
 
 /***/ }),
 
-/***/ 133:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var decorators_1 = __webpack_require__(1);
-var CalendarController = (function () {
-    function CalendarController() {
-    }
-    CalendarController.prototype.$onInit = function () { };
-    CalendarController.prototype.$onDestroy = function () { };
-    CalendarController = __decorate([
-        decorators_1.Inject()
-    ], CalendarController);
-    return CalendarController;
-}());
-exports.CalendarController = CalendarController;
-
-
-/***/ }),
-
 /***/ 134:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var calendar_controller_1 = __webpack_require__(133);
-exports.CalendarDirective = function () {
-    return {
-        bindToController: true,
-        controllerAs: '$ctl',
-        controller: calendar_controller_1.CalendarController,
-        link: function (_scope) {
-            $('#calendar').fullCalendar({
-                defaultView: 'agendaWeek',
-                minTime: "01:00:00",
-                maxTime: "12:00:00",
-                weekends: false,
-                editable: true,
-                droppable: true,
-                visibleRange: {
-                    start: '2017-10-1',
-                    end: '2017-11-1'
-                },
-                eventClick: function (calEvent, _jsEvent, _view) {
-                    var title = prompt('Event Title:', calEvent.title);
-                    if (title) {
-                        calEvent.title = title;
-                        $('#calendar').fullCalendar('updateEvent', calEvent);
-                    }
-                },
-                drop: function (_date, event) {
-                    var title = prompt('Event Title:', event.title);
-                    if (title) {
-                        event.title = title;
-                    }
-                }
-            });
-            $('div.external-event').each(function () {
-                console.log("external event");
-                $(this).data('event', {
-                    title: $.trim($(this).text()),
-                    stick: true
-                });
-                $(this).draggable({
-                    zIndex: 1000,
-                    revert: true,
-                    revertDuration: 0
-                });
-            });
-        }
-    };
-};
-
-
-/***/ }),
-
-/***/ 135:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -243,7 +176,7 @@ exports.HomeConfig = HomeConfig;
 
 /***/ }),
 
-/***/ 136:
+/***/ 135:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -269,39 +202,24 @@ var weekObject = (function () {
     return weekObject;
 }());
 var HomeController = (function () {
-    function HomeController(_scope, _authService, _authHelper, _uibModal) {
+    function HomeController(_scope, _state, _redmineService, _authHelper, _uibModal) {
         var _this = this;
         this._scope = _scope;
-        this._authService = _authService;
+        this._state = _state;
+        this._redmineService = _redmineService;
         this._authHelper = _authHelper;
         this._uibModal = _uibModal;
+        this.isLoaded = false;
         this.events = [];
         this.weeks = [];
         this.entries = [];
         this.activities = [];
-        this.login = function (form) {
-            if (form.$valid) {
-                _this.errorMsg = "";
-                var user = {
-                    username: _this.username,
-                    password: _this.password
-                };
-                _this._authService.loginRM(user).then(function (response) {
-                    _this.rdUser = response.data.user;
-                    _this._authHelper.AuthorizeUser(_this.rdUser);
-                    _this.getIssues();
-                    _this.getActivities();
-                }, function (response) {
-                    _this.errorMsg = response.data.message;
-                });
-            }
-        };
         this.getIssues = function () {
             var key = _this._authHelper.getAPIKey();
             var id = _this._authHelper.getRMUserId();
             var issueId;
             if (_this._authHelper.isAuthorized()) {
-                _this._authService.getIssues(key, id).then(function (res) {
+                _this._redmineService.getIssues(key, id).then(function (res) {
                     _this.issues = res.data.issues;
                     if (_this.issues.length === 1) {
                         issueId = _this.issues[0].id;
@@ -316,7 +234,7 @@ var HomeController = (function () {
         this.getActivities = function () {
             var key = _this._authHelper.getAPIKey();
             if (_this._authHelper.isAuthorized()) {
-                _this._authService.getActivities(key).then(function (res) {
+                _this._redmineService.getActivities(key).then(function (res) {
                     _this.activities = res.data.time_entry_activities;
                 });
             }
@@ -327,14 +245,12 @@ var HomeController = (function () {
             var currentYear = today.getFullYear();
             var lastDayInMonth = _this.daysInMonth(currentMont, currentYear);
             var dateRange = "><" + currentYear + "-" + (currentMont + 1) + "-01|" + currentYear + "-" + (currentMont + 1) + "-" + lastDayInMonth;
-            _this._authService.getTimeEntries(key, id, dateRange, issueId).then(function (rsp) {
+            _this._redmineService.getTimeEntries(key, id, dateRange, issueId).then(function (rsp) {
                 _this.timeEntries = rsp.data.time_entries;
+                _this.isLoaded = true;
                 _this.createTimeEntries();
             });
         };
-        this.getIssues();
-        this.setdaysRange();
-        this.getActivities();
     }
     HomeController.prototype.setdaysRange = function () {
         var now = new Date();
@@ -397,10 +313,19 @@ var HomeController = (function () {
     HomeController.prototype.daysInMonth = function (month, year) {
         return 32 - new Date(year, month, 32).getDate();
     };
-    HomeController.prototype.$onInit = function () { };
+    HomeController.prototype.$onInit = function () {
+        if (this._authHelper.isAuthorized()) {
+            this.getIssues();
+            this.setdaysRange();
+            this.getActivities();
+        }
+        else {
+            this._state.go("app.login");
+        }
+    };
     HomeController.prototype.$onDestroy = function () { };
     HomeController = __decorate([
-        decorators_1.Inject('$scope', 'AuthService', 'AuthHelper', '$uibModal')
+        decorators_1.Inject('$scope', '$state', 'RedmineService', 'AuthHelper', '$uibModal')
     ], HomeController);
     return HomeController;
 }());
@@ -409,7 +334,7 @@ exports.HomeController = HomeController;
 
 /***/ }),
 
-/***/ 137:
+/***/ 136:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -465,7 +390,7 @@ exports.ModalController = ModalController;
 
 /***/ }),
 
-/***/ 138:
+/***/ 137:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -488,7 +413,7 @@ var LayoutConfig = (function () {
             controller: layout_controller_1.LayoutController,
             controllerAs: "$layout"
         });
-        urlRouterProvider.otherwise('/home');
+        urlRouterProvider.otherwise('/login');
     }
     LayoutConfig = __decorate([
         decorators_1.Inject('$stateProvider', '$urlRouterProvider')
@@ -500,7 +425,96 @@ exports.LayoutConfig = LayoutConfig;
 
 /***/ }),
 
+/***/ 138:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decorators_1 = __webpack_require__(1);
+var LoginConfig = (function () {
+    function LoginConfig(stateProvider) {
+        stateProvider
+            .state('app.login', {
+            url: '/login',
+            views: {
+                content: {
+                    templateUrl: 'login/login.tpl.html',
+                    controller: 'LoginController',
+                    controllerAs: '$lc'
+                }
+            }
+        });
+    }
+    LoginConfig = __decorate([
+        decorators_1.Inject('$stateProvider')
+    ], LoginConfig);
+    return LoginConfig;
+}());
+exports.LoginConfig = LoginConfig;
+
+
+/***/ }),
+
 /***/ 139:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decorators_1 = __webpack_require__(1);
+var LoginController = (function () {
+    function LoginController(_state, _authService, _authHelper) {
+        var _this = this;
+        this._state = _state;
+        this._authService = _authService;
+        this._authHelper = _authHelper;
+        this.login = function (form) {
+            if (form.$valid) {
+                _this.errorMsg = "";
+                var user = {
+                    username: _this.username,
+                    password: _this.password
+                };
+                _this._authService.loginRM(user).then(function (response) {
+                    _this.rdUser = response.data.user;
+                    _this._authHelper.AuthorizeUser(_this.rdUser);
+                    _this._state.go("app.home");
+                }, function (response) {
+                    _this.errorMsg = response.data.message;
+                });
+            }
+        };
+    }
+    LoginController.prototype.$onInit = function () {
+        if (this._authHelper.isAuthorized()) {
+            this._state.go("app.home");
+        }
+    };
+    LoginController.prototype.$onDestroy = function () { };
+    LoginController = __decorate([
+        decorators_1.Inject('$state', 'AuthService', 'AuthHelper')
+    ], LoginController);
+    return LoginController;
+}());
+exports.LoginController = LoginController;
+
+
+/***/ }),
+
+/***/ 140:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -559,7 +573,7 @@ exports.AuthHelper = AuthHelper;
 
 /***/ }),
 
-/***/ 140:
+/***/ 141:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -579,23 +593,6 @@ var AuthService = (function () {
     AuthService.prototype.loginRM = function (user) {
         return this.http.post("user", user);
     };
-    AuthService.prototype.getIssues = function (key, id) {
-        return this.http.get("issues?key=" + key + "&id=" + id);
-    };
-    AuthService.prototype.getActivities = function (key) {
-        return this.http.get("activities?key=" + key);
-    };
-    AuthService.prototype.getTimeEntries = function (key, id, date, issueId) {
-        if (issueId) {
-            return this.http.get("times?key=" + key + "&id=" + id + "&issue_id=" + issueId + "&spend_on=" + date);
-        }
-        else {
-            return this.http.get("times?key=" + key + "&id=" + id + "&spend_on=" + date);
-        }
-    };
-    AuthService.prototype.getJson = function () {
-        return this.http.get("user");
-    };
     AuthService = __decorate([
         decorators_1.Inject('$http')
     ], AuthService);
@@ -606,7 +603,51 @@ exports.AuthService = AuthService;
 
 /***/ }),
 
-/***/ 143:
+/***/ 142:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decorators_1 = __webpack_require__(1);
+var RedmineService = (function () {
+    function RedmineService(http) {
+        this.http = http;
+    }
+    RedmineService.prototype.loginRM = function (user) {
+        return this.http.post("user", user);
+    };
+    RedmineService.prototype.getIssues = function (key, id) {
+        return this.http.get("issues?key=" + key + "&id=" + id);
+    };
+    RedmineService.prototype.getActivities = function (key) {
+        return this.http.get("activities?key=" + key);
+    };
+    RedmineService.prototype.getTimeEntries = function (key, id, date, issueId) {
+        if (issueId) {
+            return this.http.get("times?key=" + key + "&id=" + id + "&issue_id=" + issueId + "&spend_on=" + date);
+        }
+        else {
+            return this.http.get("times?key=" + key + "&id=" + id + "&spend_on=" + date);
+        }
+    };
+    RedmineService = __decorate([
+        decorators_1.Inject('$http')
+    ], RedmineService);
+    return RedmineService;
+}());
+exports.RedmineService = RedmineService;
+
+
+/***/ }),
+
+/***/ 145:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -615,9 +656,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
 var app_config_1 = __webpack_require__(125);
 var app_run_1 = __webpack_require__(126);
-var services_module_1 = __webpack_require__(129);
+var services_module_1 = __webpack_require__(130);
 var layout_module_1 = __webpack_require__(128);
 var home_module_1 = __webpack_require__(127);
+var login_module_1 = __webpack_require__(129);
 angular
     .module('app', [
     'app.tpls',
@@ -626,7 +668,8 @@ angular
     'ngAnimate',
     services_module_1.ServicesModule,
     layout_module_1.LayoutModule,
-    home_module_1.HomeModule
+    home_module_1.HomeModule,
+    login_module_1.LoginModule
 ])
     .config(app_config_1.AppConfig)
     .run(app_run_1.AppRun);
@@ -648,13 +691,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var decorators_1 = __webpack_require__(1);
 var LayoutController = (function () {
-    function LayoutController() {
+    function LayoutController(_authHelper) {
         this.date = new Date();
     }
-    LayoutController.prototype.$onInit = function () { };
+    LayoutController.prototype.$onInit = function () {
+    };
     LayoutController.prototype.$onDestroy = function () { };
     LayoutController = __decorate([
-        decorators_1.Inject()
+        decorators_1.Inject('AuthHelper')
     ], LayoutController);
     return LayoutController;
 }());
@@ -663,5 +707,5 @@ exports.LayoutController = LayoutController;
 
 /***/ })
 
-},[143]);
+},[145]);
 //# sourceMappingURL=app.js.map

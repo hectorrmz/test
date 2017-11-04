@@ -1,5 +1,7 @@
-declare interface ITimeEntry {
-    activity: IActivity;
+import { Activity } from "./Activity";
+
+export interface TimeEntry {
+    activity: Activity;
     comments: string;
     created_on: string;
     hours: number;

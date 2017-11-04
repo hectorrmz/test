@@ -12,6 +12,6 @@ export class LayoutConfig {
                 controllerAs: "$layout"
             });
 
-        urlRouterProvider.otherwise('/home');
+        urlRouterProvider.otherwise('/login');
     }
 }

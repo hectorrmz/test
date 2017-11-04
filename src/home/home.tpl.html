@@ -1,30 +1,12 @@
-<div class="home">
-    <div class="jumbotron">
-        <div class="container text-center">
-            <h1>My Heroku App Test</h1>
-            <p>Some sub headline text as description..</p>
-        </div>
+<div class="loader text-center" ng-hide="$hc.isLoaded">
+    <div class="spinner">
+        <div class="cube1"></div>
+        <div class="cube2"></div>
     </div>
+    <p>Loading Time Entries...</p>
+</div>
 
-    <div class="container-fluid bg-3 text-center" ng-hide="$hc.issues">
-        <h3>Some Headline Here</h3>
-
-        <form name="loginForm" class="col-xl-3 col-lg-4 col-md-6 col-sm-9 text-left" novalidate ng-submit="$hc.login(loginForm)">
-            <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" ng-model="$hc.username" aria-describedby="emailHelp" placeholder="Enter email"
-                    autofocus>
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" ng-model="$hc.password" placeholder="Password">
-            </div>
-            <p class="text-danger small">{{$hc.errorMsg}}</p>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+<div class="home" ng-show="$hc.isLoaded">
     <div class="container-fluid bg-3 text-center" ng-show="$hc.issues">
 
         <div class="issuesBox col-lg-7 col-md-8 text-left">
@@ -40,7 +22,7 @@
         </div>
         <div class="time-calendar" ng-init="currentView = 0">
             <div class="arrowed" ng-style="{'visibility': currentView != 0 ? 'visible' : 'hidden'}" ng-click="(currentView > 0) ? currentView = currentView -1 : currentView = 0">
-                    <div class="arrow-1 left"></div>
+                <div class="arrow-1 left"></div>
             </div>
             <div class="calendar">
                 <div class="week" ng-repeat="week in $hc.weeks" ng-show="currentView === $index">
@@ -65,7 +47,7 @@
                 </div>
             </div>
             <div class="arrowed" ng-style="{'visibility': currentView < $hc.weeks.length-1 ? 'visible' : 'hidden'}" ng-click="(currentView < 2) ? currentView = currentView +1 : currentView = 2">
-                    <div class="arrow-1 right"></div>
+                <div class="arrow-1 right"></div>
             </div>
         </div>
     </div>
