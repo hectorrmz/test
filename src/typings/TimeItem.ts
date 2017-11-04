@@ -5,5 +5,6 @@ export interface TimeItem{
     activity: {
         id: number,
         name: string
-    }
+    },
+    isNew?: boolean
 }

@@ -1,26 +1,28 @@
 <div class="modal-header modal-header-primary">
 
-    <h2>Add new Time Entry</h2>
+    <h2>Add new Time Entry for {{md.now}}</h2>
 </div>
 <div class="modal-body">
     <div class="col-md-12">
-        <div class="table-responsive">
 
+        <div class="col-md-12">
             <label>Title</label>
             <input name="title" type="text" class="form-control" ng-model="md.time.title">
-            <label>Hours</label>
-            <input name="hour" type="number" class="form-control" ng-model="md.time.hours">
-
-            <label>Activity</label>
-            <select class="form-control" ng-model="md.time.activity">
-                <option value="9" selected>Development</option>
-                <option value="12">Meeting</option>
-                <option value="14">Research</option>
-                <option value="72">Design</option>
-            </select>
-
-            <label class="small">Hours to complete day: {{ $hc.getTotal() }}</label>
         </div>
+        <div class="form-group">
+            <div class="col-md-3">
+                <label>Hours</label>
+                <input name="hour" type="number" class="form-control" ng-model="md.time.hours">
+            </div>
+            <div class="col-md-8">
+                <label>Activity</label>
+                <select name="mySelect" id="mySelect" ng-options="option.name for option in $hc.activities track by option.id" ng-model="md.time.activity"
+                    class="form-control"></select>
+            </div>
+        </div>
+        <label ng-if="md.left > 0" class="small">Hours to complete day: {{ md.left }}</label>
+        <label ng-if="md.left === 0" class="small">This day is complete</label>
+        <label ng-if="md.left < 0" class="small">This day has over time by {{(md.left - 8)}}</label>
     </div>
 </div>
 <div class="clearfix"></div>

@@ -66,6 +66,27 @@
 
 	});
 
+	app.get("/activities", function (req, res) {
+		
+				var url_parts = url.parse(req.url, true);
+				var query = url_parts.query;
+		
+				if (!query.key) {
+					res.status("401").send({ message: "Not Authorized" });
+				}
+		
+				var options = {
+					protocol: "https",
+					host: "dev.unosquare.com",
+					pathname: "/redmine/enumerations/time_entry_activities.json",
+					query: { key: query.key }
+				};
+		
+				var jsonUrl = url.format(options);
+				request(jsonUrl).pipe(res);
+		
+			});
+
 	app.get("/times", function (req, res) {
 
 		var url_parts = url.parse(req.url, true);

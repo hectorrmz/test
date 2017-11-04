@@ -35,10 +35,15 @@ export class HomeController {
     public weeks: Array<weekObject> = [];
     public entries: Array<TimeItem> = [];
 
+    public activities: Array<IActivity> = [];
+
+
+
 
     constructor(private _scope:ng.IScope, private _authService: IAuthService, private _authHelper: IAuthHelper, private _uibModal: ng.ui.bootstrap.IModalService) {
         this.getIssues();
         this.setdaysRange();
+        this.getActivities();
     }
 
     private setdaysRange() {
@@ -91,6 +96,8 @@ export class HomeController {
                 this._authHelper.AuthorizeUser(this.rdUser);
 
                 this.getIssues();
+                this.getActivities();
+                
 
             }, (response) => {
                 //console.log(response);
@@ -121,6 +128,18 @@ export class HomeController {
             });
         }
     };
+
+    private getActivities = () => {
+        
+                let key: string = this._authHelper.getAPIKey();
+        
+                if (this._authHelper.isAuthorized()) {
+                    this._authService.getActivities(key).then((res: any) => {
+        
+                        this.activities = res.data.time_entry_activities;
+                    });
+                }
+            };
 
     private getTimes = (key: string, id: number, issueId?: number) => {
 
@@ -165,7 +184,6 @@ export class HomeController {
         console.log(date);
 
         var modalInstance = this._uibModal.open({
-            animation: true,
             templateUrl: 'home/time-form.html',
             controller: "ModalController as md",
             scope: this._scope,

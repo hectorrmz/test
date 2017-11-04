@@ -20,7 +20,7 @@ exports.Inject = Inject;
 
 /***/ }),
 
-/***/ 123:
+/***/ 125:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46,7 +46,7 @@ exports.AppConfig = AppConfig;
 
 /***/ }),
 
-/***/ 124:
+/***/ 126:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62,16 +62,16 @@ exports.AppRun = AppRun;
 
 /***/ }),
 
-/***/ 125:
+/***/ 127:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var home_config_1 = __webpack_require__(131);
-var home_controller_1 = __webpack_require__(132);
-var modal_controller_1 = __webpack_require__(144);
+var home_config_1 = __webpack_require__(135);
+var home_controller_1 = __webpack_require__(136);
+var modal_controller_1 = __webpack_require__(137);
 exports.HomeModule = angular
     .module('test.home', ['ui.router'])
     .controller('HomeController', home_controller_1.HomeController)
@@ -82,16 +82,16 @@ exports.HomeModule = angular
 
 /***/ }),
 
-/***/ 126:
+/***/ 128:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var layout_config_1 = __webpack_require__(133);
+var layout_config_1 = __webpack_require__(138);
 var layout_controller_1 = __webpack_require__(3);
-var calendar_directive_1 = __webpack_require__(130);
+var calendar_directive_1 = __webpack_require__(134);
 exports.LayoutModule = angular
     .module('test.layout', ['ui.router'])
     .controller('LayoutController', layout_controller_1.LayoutController)
@@ -102,15 +102,15 @@ exports.LayoutModule = angular
 
 /***/ }),
 
-/***/ 127:
+/***/ 129:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var auth_service_1 = __webpack_require__(135);
-var auth_helper_1 = __webpack_require__(134);
+var auth_service_1 = __webpack_require__(140);
+var auth_helper_1 = __webpack_require__(139);
 exports.ServicesModule = angular
     .module('app.services', [])
     .service('AuthService', auth_service_1.AuthService)
@@ -121,7 +121,7 @@ exports.ServicesModule = angular
 
 /***/ }),
 
-/***/ 129:
+/***/ 133:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -149,13 +149,13 @@ exports.CalendarController = CalendarController;
 
 /***/ }),
 
-/***/ 130:
+/***/ 134:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var calendar_controller_1 = __webpack_require__(129);
+var calendar_controller_1 = __webpack_require__(133);
 exports.CalendarDirective = function () {
     return {
         bindToController: true,
@@ -206,7 +206,7 @@ exports.CalendarDirective = function () {
 
 /***/ }),
 
-/***/ 131:
+/***/ 135:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -243,7 +243,7 @@ exports.HomeConfig = HomeConfig;
 
 /***/ }),
 
-/***/ 132:
+/***/ 136:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -278,6 +278,7 @@ var HomeController = (function () {
         this.events = [];
         this.weeks = [];
         this.entries = [];
+        this.activities = [];
         this.login = function (form) {
             if (form.$valid) {
                 _this.errorMsg = "";
@@ -289,6 +290,7 @@ var HomeController = (function () {
                     _this.rdUser = response.data.user;
                     _this._authHelper.AuthorizeUser(_this.rdUser);
                     _this.getIssues();
+                    _this.getActivities();
                 }, function (response) {
                     _this.errorMsg = response.data.message;
                 });
@@ -311,6 +313,14 @@ var HomeController = (function () {
                 });
             }
         };
+        this.getActivities = function () {
+            var key = _this._authHelper.getAPIKey();
+            if (_this._authHelper.isAuthorized()) {
+                _this._authService.getActivities(key).then(function (res) {
+                    _this.activities = res.data.time_entry_activities;
+                });
+            }
+        };
         this.getTimes = function (key, id, issueId) {
             var today = new Date();
             var currentMont = today.getMonth();
@@ -324,6 +334,7 @@ var HomeController = (function () {
         };
         this.getIssues();
         this.setdaysRange();
+        this.getActivities();
     }
     HomeController.prototype.setdaysRange = function () {
         var now = new Date();
@@ -362,7 +373,6 @@ var HomeController = (function () {
     HomeController.prototype.addTime = function (date) {
         console.log(date);
         var modalInstance = this._uibModal.open({
-            animation: true,
             templateUrl: 'home/time-form.html',
             controller: "ModalController as md",
             scope: this._scope,
@@ -399,7 +409,63 @@ exports.HomeController = HomeController;
 
 /***/ }),
 
-/***/ 133:
+/***/ 137:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decorators_1 = __webpack_require__(1);
+var moment = __webpack_require__(0);
+var ModalController = (function () {
+    function ModalController(_scope, _uibModalInstance, date) {
+        this._scope = _scope;
+        this._uibModalInstance = _uibModalInstance;
+        this.date = date;
+        this.time = {};
+        this.time.activity = 9;
+        this.now = new Date();
+        this.now = moment();
+        this.now = this.now.set({
+            year: new Date().getFullYear(),
+            month: new Date().getMonth(),
+            date: this.date
+        }).format('dddd, MMMM Do');
+        this.left = (8 - _scope.$hc.getTotal(this.date)).toFixed(2);
+    }
+    ModalController.prototype.save = function () {
+        if (this.time.hours > this.left) {
+            alert("Excess!");
+        }
+        this._uibModalInstance.close();
+        this._scope.$hc.entries.push({
+            title: this.time.title,
+            duration: this.time.hours,
+            activity: this.time.activity,
+            date: this.date,
+            isNew: true
+        });
+    };
+    ModalController.prototype.close = function () {
+        this._uibModalInstance.close();
+    };
+    ModalController = __decorate([
+        decorators_1.Inject('$scope', '$uibModalInstance', 'date')
+    ], ModalController);
+    return ModalController;
+}());
+exports.ModalController = ModalController;
+
+
+/***/ }),
+
+/***/ 138:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -434,7 +500,7 @@ exports.LayoutConfig = LayoutConfig;
 
 /***/ }),
 
-/***/ 134:
+/***/ 139:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -493,7 +559,7 @@ exports.AuthHelper = AuthHelper;
 
 /***/ }),
 
-/***/ 135:
+/***/ 140:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -516,6 +582,9 @@ var AuthService = (function () {
     AuthService.prototype.getIssues = function (key, id) {
         return this.http.get("issues?key=" + key + "&id=" + id);
     };
+    AuthService.prototype.getActivities = function (key) {
+        return this.http.get("activities?key=" + key);
+    };
     AuthService.prototype.getTimeEntries = function (key, id, date, issueId) {
         if (issueId) {
             return this.http.get("times?key=" + key + "&id=" + id + "&issue_id=" + issueId + "&spend_on=" + date);
@@ -537,18 +606,18 @@ exports.AuthService = AuthService;
 
 /***/ }),
 
-/***/ 138:
+/***/ 143:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var app_config_1 = __webpack_require__(123);
-var app_run_1 = __webpack_require__(124);
-var services_module_1 = __webpack_require__(127);
-var layout_module_1 = __webpack_require__(126);
-var home_module_1 = __webpack_require__(125);
+var app_config_1 = __webpack_require__(125);
+var app_run_1 = __webpack_require__(126);
+var services_module_1 = __webpack_require__(129);
+var layout_module_1 = __webpack_require__(128);
+var home_module_1 = __webpack_require__(127);
 angular
     .module('app', [
     'app.tpls',
@@ -561,54 +630,6 @@ angular
 ])
     .config(app_config_1.AppConfig)
     .run(app_run_1.AppRun);
-
-
-/***/ }),
-
-/***/ 144:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var decorators_1 = __webpack_require__(1);
-var ModalController = (function () {
-    function ModalController(_scope, _uibModalInstance, date) {
-        this._scope = _scope;
-        this._uibModalInstance = _uibModalInstance;
-        this.date = date;
-        this.time = {};
-        this.time.activity = 9;
-    }
-    ModalController.prototype.save = function () {
-        console.log(this._scope);
-        console.log(this.time);
-        this._uibModalInstance.close();
-        this._scope.$hc.entries.push({
-            title: this.time.title,
-            duration: this.time.hours,
-            activity: {
-                id: this.time.activity,
-                name: "whatsover"
-            },
-            date: this.date
-        });
-    };
-    ModalController.prototype.close = function () {
-        this._uibModalInstance.close();
-    };
-    ModalController = __decorate([
-        decorators_1.Inject('$scope', '$uibModalInstance', 'date')
-    ], ModalController);
-    return ModalController;
-}());
-exports.ModalController = ModalController;
 
 
 /***/ }),
@@ -642,5 +663,5 @@ exports.LayoutController = LayoutController;
 
 /***/ })
 
-},[138]);
+},[143]);
 //# sourceMappingURL=app.js.map
