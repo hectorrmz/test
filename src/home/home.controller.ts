@@ -55,7 +55,7 @@ export class HomeController {
         var firstDay: number = now.getDate() <= 15 ? 1 : 16;
         var end: number = now.getDate() <= 15 ? 15 : this.daysInMonth(now.getMonth(), now.getFullYear());
 
-        var initial = new Date(`${now.getMonth() + 1}-${firstDay}-${now.getFullYear()}`);
+        var initial = new Date(`${now.getMonth() + 1}/${firstDay}/${now.getFullYear()}`);
         //console.log(initial);
 
         var initialNumber: number = initial.getDay(); // 0-6
