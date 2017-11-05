@@ -20,35 +20,6 @@
                 </div>
             </div>
         </div>
-        <div class="time-calendar" ng-init="currentView = 0">
-            <div class="arrowed" ng-style="{'visibility': currentView != 0 ? 'visible' : 'hidden'}" ng-click="(currentView > 0) ? currentView = currentView -1 : currentView = 0">
-                <div class="arrow-1 left"></div>
-            </div>
-            <div class="calendar">
-                <div class="week" ng-repeat="week in $hc.weeks" ng-show="currentView === $index">
-                    <div class="weekday" ng-repeat="day in week.weekDays;" ng-hide="day.day===0 || day.day===6" ng-class="{'no-active': !day.date}">
-                        <header>{{day.name}} {{day.date}}</header>
-                        <div class="day">
-                            <div class="time activity-{{time.activity.id}}" ng-if="day.date" ng-repeat="time in  $hc.entries | filter: {date: day.date}: true ">
-                                <span>{{time.title}}</span>
-
-                                <div>
-                                    <span class="hours">Hours:
-                                        <span class="hour-value">{{time.duration}}</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="day-footer" ng-if="day.date">
-                            <div class="add-btn" ng-click="$hc.addTime(day.date)">+</div>
-                            <span>Total: {{$hc.getTotal(day.date)}}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="arrowed" ng-style="{'visibility': currentView < $hc.weeks.length-1 ? 'visible' : 'hidden'}" ng-click="(currentView < 2) ? currentView = currentView +1 : currentView = 2">
-                <div class="arrow-1 right"></div>
-            </div>
-        </div>
+        <calendar-view times="$hc.entries" onAddTime="$hc.addTime(2)"></calendar-view>
     </div>
 </div>

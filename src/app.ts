@@ -12,6 +12,7 @@ angular
         'ui.router',
         'ui.bootstrap',
         'ngAnimate',
+        'dndLists',
 
         ServicesModule,
         LayoutModule,

@@ -6,24 +6,7 @@ import { TimeEntry } from '../models/TimeEntry';
 import { Activity } from '../models/Activity';
 import { AuthHelper } from '../services/auth.helper';
 import { RedmineService } from '../services/redmine.service';
-
-declare interface weekDay {
-    name: string; // S-M-T-W-T-F-S
-    date?: number; //1-31
-    day: number; //0-6
-}
-
-class weekObject {
-    weekDays: Array<weekDay> = [];
-
-    constructor() {
-        var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-        days.forEach((dayName: string, index: number) => {
-            this.weekDays.push({ name: dayName, day: index });
-        });
-    }
-}
+import { TimesList } from './components/calendar-view/models/TimesList';
 
 @Inject('$scope', '$state', 'RedmineService', 'AuthHelper', '$uibModal')
 export class HomeController {
@@ -34,12 +17,9 @@ export class HomeController {
     public timeEntries: Array<TimeEntry>;
     public events: Array<any> = [];
 
-    public weeks: Array<weekObject> = [];
     public entries: Array<TimeItem> = [];
 
     public activities: Array<Activity> = [];
-
-
 
 
     constructor(
@@ -49,38 +29,7 @@ export class HomeController {
         private _authHelper: AuthHelper,
         private _uibModal: ng.ui.bootstrap.IModalService) { }
 
-    private setdaysRange() {
-        var now = new Date();
-
-        var firstDay: number = now.getDate() <= 15 ? 1 : 16;
-        var end: number = now.getDate() <= 15 ? 15 : this.daysInMonth(now.getMonth(), now.getFullYear());
-
-        var initial = new Date(`${now.getMonth() + 1}/${firstDay}/${now.getFullYear()}`);
-        //console.log(initial);
-
-        var initialNumber: number = initial.getDay(); // 0-6
-        var dayNumber = initial.getDate(); // date 1
-        var skip = false;
-        while (end > dayNumber) {
-            var weekObj = new weekObject();
-
-            weekObj.weekDays.forEach((day, index) => {
-
-                if ((index >= initialNumber || skip) && dayNumber <= end) {
-                    day.date = dayNumber;
-                    dayNumber++;
-                }
-                //console.log(day, index);
-            });
-
-            skip = true;
-
-            this.weeks.push(weekObj);
-        }
-
-        console.log(this.weeks);
-    }
-
+    
     private getIssues = () => {
 
         let key: string = this._authHelper.getAPIKey();
@@ -119,7 +68,6 @@ export class HomeController {
 
     private getTimes = (key: string, id: number, issueId?: number) => {
 
-
         var today = new Date();
 
         var currentMont = today.getMonth();
@@ -155,17 +103,18 @@ export class HomeController {
             this.entries.push(entry);
         });
 
+        this._scope.$broadcast("loadTimesOnCalendar");
+
     }
 
-    public addTime(date: number) {
-        console.log(date);
+    public addTime(times: TimesList) {
 
         var modalInstance = this._uibModal.open({
             templateUrl: 'home/time-form.html',
             controller: "ModalController as md",
             scope: this._scope,
             resolve: {
-                date: date
+                times: times
             }
         });
 
@@ -176,19 +125,7 @@ export class HomeController {
         });
     }
 
-    public getTotal(date: number): number {
-        var total: number = 0;
-
-        var entries: Array<any> = this.entries.filter((entry: any) => {
-            return entry.date == date;
-        });
-
-        entries.forEach((entry: any) => {
-            total += entry.duration;
-        });
-
-        return total;
-    }
+    
 
     private daysInMonth(month: number, year: number) {
         return 32 - new Date(year, month, 32).getDate();
@@ -198,7 +135,6 @@ export class HomeController {
     $onInit(): void {
         if (this._authHelper.isAuthorized()) {
             this.getIssues();
-            this.setdaysRange();
             this.getActivities();
         } else {
             this._state.go("app.login");

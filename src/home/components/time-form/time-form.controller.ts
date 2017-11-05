@@ -1,10 +1,9 @@
 import * as moment from 'moment';
-import { Inject } from '../decorators/decorators';
-import { TimesList } from './components/calendar-view/models/TimesList';
+import { Inject } from '../../../decorators/decorators';
+import { TimesList } from '../calendar-view/models/TimesList';
 
 @Inject('$scope', '$uibModalInstance', 'times')
-export class ModalController {
-
+export class TimeFormController {
     time: any = {};
     now: any;
     left: string;
@@ -12,7 +11,6 @@ export class ModalController {
     constructor(private _scope: any, private _uibModalInstance: ng.ui.bootstrap.IModalServiceInstance, private times: TimesList){
 
         this.now = new Date();
-
 
         this.now = moment(this.times.date).format('dddd, MMMM Do');
 
@@ -30,7 +28,7 @@ export class ModalController {
     
             this._uibModalInstance.close();
     
-            this.times.entries.push({
+            this._scope.$hc.entries.push({
                 title: this.time.title,
                 duration: this.time.hours,
                 activity: this.time.activity,

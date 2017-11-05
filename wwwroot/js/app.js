@@ -20,7 +20,7 @@ exports.Inject = Inject;
 
 /***/ }),
 
-/***/ 125:
+/***/ 126:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46,7 +46,7 @@ exports.AppConfig = AppConfig;
 
 /***/ }),
 
-/***/ 126:
+/***/ 127:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62,26 +62,6 @@ exports.AppRun = AppRun;
 
 /***/ }),
 
-/***/ 127:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var angular = __webpack_require__(2);
-var home_config_1 = __webpack_require__(134);
-var home_controller_1 = __webpack_require__(135);
-var modal_controller_1 = __webpack_require__(136);
-exports.HomeModule = angular
-    .module('test.home', ['ui.router'])
-    .controller('HomeController', home_controller_1.HomeController)
-    .controller('ModalController', modal_controller_1.ModalController)
-    .config(home_config_1.HomeConfig)
-    .name;
-
-
-/***/ }),
-
 /***/ 128:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -89,12 +69,20 @@ exports.HomeModule = angular
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var layout_config_1 = __webpack_require__(137);
-var layout_controller_1 = __webpack_require__(3);
-exports.LayoutModule = angular
-    .module('test.layout', ['ui.router'])
-    .controller('LayoutController', layout_controller_1.LayoutController)
-    .config(layout_config_1.LayoutConfig)
+var home_config_1 = __webpack_require__(139);
+var home_controller_1 = __webpack_require__(140);
+var modal_controller_1 = __webpack_require__(141);
+var calendar_view_component_1 = __webpack_require__(135);
+var calendar_view_controller_1 = __webpack_require__(136);
+var time_form_component_1 = __webpack_require__(138);
+exports.HomeModule = angular
+    .module('test.home', ['ui.router'])
+    .controller('HomeController', home_controller_1.HomeController)
+    .controller('ModalController', modal_controller_1.ModalController)
+    .controller('CalendarViewController', calendar_view_controller_1.CalendarViewController)
+    .component('calendarView', calendar_view_component_1.CalendarViewComponent)
+    .component('timeForm', time_form_component_1.TimeFormComponent)
+    .config(home_config_1.HomeConfig)
     .name;
 
 
@@ -107,12 +95,12 @@ exports.LayoutModule = angular
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var login_config_1 = __webpack_require__(138);
-var login_controller_1 = __webpack_require__(139);
-exports.LoginModule = angular
-    .module('test.login', ['ui.router'])
-    .controller('LoginController', login_controller_1.LoginController)
-    .config(login_config_1.LoginConfig)
+var layout_config_1 = __webpack_require__(142);
+var layout_controller_1 = __webpack_require__(3);
+exports.LayoutModule = angular
+    .module('test.layout', ['ui.router'])
+    .controller('LayoutController', layout_controller_1.LayoutController)
+    .config(layout_config_1.LayoutConfig)
     .name;
 
 
@@ -125,9 +113,27 @@ exports.LoginModule = angular
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var auth_service_1 = __webpack_require__(141);
-var auth_helper_1 = __webpack_require__(140);
-var redmine_service_1 = __webpack_require__(142);
+var login_config_1 = __webpack_require__(143);
+var login_controller_1 = __webpack_require__(144);
+exports.LoginModule = angular
+    .module('test.login', ['ui.router'])
+    .controller('LoginController', login_controller_1.LoginController)
+    .config(login_config_1.LoginConfig)
+    .name;
+
+
+/***/ }),
+
+/***/ 131:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var angular = __webpack_require__(2);
+var auth_service_1 = __webpack_require__(146);
+var auth_helper_1 = __webpack_require__(145);
+var redmine_service_1 = __webpack_require__(147);
 exports.ServicesModule = angular
     .module('app.services', [])
     .service('AuthService', auth_service_1.AuthService)
@@ -139,7 +145,151 @@ exports.ServicesModule = angular
 
 /***/ }),
 
-/***/ 134:
+/***/ 135:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CalendarViewComponent = {
+    controller: 'CalendarViewController',
+    controllerAs: 'cv',
+    templateUrl: 'home/components/calendar-view/calendar-view.tpl.html',
+    bindings: {
+        entries: "=times",
+        onAddTime: "&openModal"
+    }
+};
+
+
+/***/ }),
+
+/***/ 136:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decorators_1 = __webpack_require__(1);
+var Week_1 = __webpack_require__(137);
+var CalendarViewController = (function () {
+    function CalendarViewController(_scope) {
+        var _this = this;
+        this._scope = _scope;
+        this.weeks = [];
+        this.entries = [];
+        this._scope.$on('loadTimesOnCalendar', function () {
+            _this.setLoggedTimeEntries();
+        });
+    }
+    CalendarViewController.prototype.setdaysRange = function () {
+        var now = new Date();
+        var firstDay = now.getDate() <= 15 ? 1 : 16;
+        var end = now.getDate() <= 15 ? 15 : this.daysInMonth(now.getMonth(), now.getFullYear());
+        var initial = new Date(now.getMonth() + 1 + "/" + firstDay + "/" + now.getFullYear());
+        var initialNumber = initial.getDay();
+        var dayNumber = initial.getDate();
+        var skip = false;
+        while (end > dayNumber) {
+            var weekObj = new Week_1.Week();
+            weekObj.weekDays.forEach(function (day, index) {
+                if ((index >= initialNumber || skip) && dayNumber <= end) {
+                    day.date = dayNumber;
+                    day.times.date = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + dayNumber;
+                    dayNumber++;
+                }
+            });
+            skip = true;
+            this.weeks.push(weekObj);
+        }
+    };
+    CalendarViewController.prototype.setLoggedTimeEntries = function () {
+        var _this = this;
+        this.weeks.forEach(function (week) {
+            week.weekDays.forEach(function (day) {
+                day.times.entries = _this.entries.filter(function (entry) {
+                    return entry.date === day.date;
+                });
+            });
+        });
+    };
+    CalendarViewController.prototype.test = function (test, other, $index) {
+        console.log(test, other, $index);
+        this.entries.splice($index, 1);
+    };
+    CalendarViewController.prototype.daysInMonth = function (month, year) {
+        return 32 - new Date(year, month, 32).getDate();
+    };
+    CalendarViewController.prototype.getTotal = function (entries) {
+        var total = 0;
+        var total = 0;
+        for (var i = 0, _len = entries.length; i < _len; i++) {
+            total += entries[i].duration;
+        }
+        return total;
+    };
+    CalendarViewController.prototype.openModal = function (times) {
+        this._scope.$parent.$hc.addTime(times);
+    };
+    CalendarViewController.prototype.$onInit = function () {
+        this.setdaysRange();
+    };
+    CalendarViewController.prototype.$onDestroy = function () { };
+    CalendarViewController = __decorate([
+        decorators_1.Inject('$scope')
+    ], CalendarViewController);
+    return CalendarViewController;
+}());
+exports.CalendarViewController = CalendarViewController;
+
+
+/***/ }),
+
+/***/ 137:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Week = (function () {
+    function Week() {
+        var _this = this;
+        this.weekDays = [];
+        var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        days.forEach(function (dayName, index) {
+            _this.weekDays.push({ name: dayName, day: index, times: { date: "", entries: [] } });
+        });
+    }
+    return Week;
+}());
+exports.Week = Week;
+
+
+/***/ }),
+
+/***/ 138:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TimeFormComponent = {
+    controller: 'TimeFormController',
+    controllerAs: '$fc',
+    templateUrl: 'home/components/time-form/time-form.tpl.html',
+    bindings: {}
+};
+
+
+/***/ }),
+
+/***/ 139:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -176,7 +326,7 @@ exports.HomeConfig = HomeConfig;
 
 /***/ }),
 
-/***/ 135:
+/***/ 140:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -190,17 +340,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var decorators_1 = __webpack_require__(1);
 var moment = __webpack_require__(0);
-var weekObject = (function () {
-    function weekObject() {
-        var _this = this;
-        this.weekDays = [];
-        var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        days.forEach(function (dayName, index) {
-            _this.weekDays.push({ name: dayName, day: index });
-        });
-    }
-    return weekObject;
-}());
 var HomeController = (function () {
     function HomeController(_scope, _state, _redmineService, _authHelper, _uibModal) {
         var _this = this;
@@ -211,7 +350,6 @@ var HomeController = (function () {
         this._uibModal = _uibModal;
         this.isLoaded = false;
         this.events = [];
-        this.weeks = [];
         this.entries = [];
         this.activities = [];
         this.getIssues = function () {
@@ -252,27 +390,6 @@ var HomeController = (function () {
             });
         };
     }
-    HomeController.prototype.setdaysRange = function () {
-        var now = new Date();
-        var firstDay = now.getDate() <= 15 ? 1 : 16;
-        var end = now.getDate() <= 15 ? 15 : this.daysInMonth(now.getMonth(), now.getFullYear());
-        var initial = new Date(now.getMonth() + 1 + "-" + firstDay + "-" + now.getFullYear());
-        var initialNumber = initial.getDay();
-        var dayNumber = initial.getDate();
-        var skip = false;
-        while (end > dayNumber) {
-            var weekObj = new weekObject();
-            weekObj.weekDays.forEach(function (day, index) {
-                if ((index >= initialNumber || skip) && dayNumber <= end) {
-                    day.date = dayNumber;
-                    dayNumber++;
-                }
-            });
-            skip = true;
-            this.weeks.push(weekObj);
-        }
-        console.log(this.weeks);
-    };
     HomeController.prototype.createTimeEntries = function () {
         var _this = this;
         this.timeEntries.forEach(function (time) {
@@ -285,30 +402,20 @@ var HomeController = (function () {
             };
             _this.entries.push(entry);
         });
+        this._scope.$broadcast("loadTimesOnCalendar");
     };
-    HomeController.prototype.addTime = function (date) {
-        console.log(date);
+    HomeController.prototype.addTime = function (times) {
         var modalInstance = this._uibModal.open({
             templateUrl: 'home/time-form.html',
             controller: "ModalController as md",
             scope: this._scope,
             resolve: {
-                date: date
+                times: times
             }
         });
         modalInstance.result.then(function (_selectedItem) {
         }, function () {
         });
-    };
-    HomeController.prototype.getTotal = function (date) {
-        var total = 0;
-        var entries = this.entries.filter(function (entry) {
-            return entry.date == date;
-        });
-        entries.forEach(function (entry) {
-            total += entry.duration;
-        });
-        return total;
     };
     HomeController.prototype.daysInMonth = function (month, year) {
         return 32 - new Date(year, month, 32).getDate();
@@ -316,7 +423,6 @@ var HomeController = (function () {
     HomeController.prototype.$onInit = function () {
         if (this._authHelper.isAuthorized()) {
             this.getIssues();
-            this.setdaysRange();
             this.getActivities();
         }
         else {
@@ -334,7 +440,7 @@ exports.HomeController = HomeController;
 
 /***/ }),
 
-/***/ 136:
+/***/ 141:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -346,42 +452,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decorators_1 = __webpack_require__(1);
 var moment = __webpack_require__(0);
+var decorators_1 = __webpack_require__(1);
 var ModalController = (function () {
-    function ModalController(_scope, _uibModalInstance, date) {
+    function ModalController(_scope, _uibModalInstance, times) {
         this._scope = _scope;
         this._uibModalInstance = _uibModalInstance;
-        this.date = date;
+        this.times = times;
         this.time = {};
-        this.time.activity = 9;
         this.now = new Date();
-        this.now = moment();
-        this.now = this.now.set({
-            year: new Date().getFullYear(),
-            month: new Date().getMonth(),
-            date: this.date
-        }).format('dddd, MMMM Do');
-        this.left = (8 - _scope.$hc.getTotal(this.date)).toFixed(2);
+        this.now = moment(this.times.date).format('dddd, MMMM Do');
     }
-    ModalController.prototype.save = function () {
-        if (this.time.hours > this.left) {
-            alert("Excess!");
+    ModalController.prototype.save = function (form) {
+        if (form.$valid) {
+            if (this.time.hours > this.left) {
+                alert("Excess!");
+            }
+            this._uibModalInstance.close();
+            this.times.entries.push({
+                title: this.time.title,
+                duration: this.time.hours,
+                activity: this.time.activity,
+                isNew: true
+            });
         }
-        this._uibModalInstance.close();
-        this._scope.$hc.entries.push({
-            title: this.time.title,
-            duration: this.time.hours,
-            activity: this.time.activity,
-            date: this.date,
-            isNew: true
-        });
     };
     ModalController.prototype.close = function () {
         this._uibModalInstance.close();
     };
     ModalController = __decorate([
-        decorators_1.Inject('$scope', '$uibModalInstance', 'date')
+        decorators_1.Inject('$scope', '$uibModalInstance', 'times')
     ], ModalController);
     return ModalController;
 }());
@@ -390,7 +490,7 @@ exports.ModalController = ModalController;
 
 /***/ }),
 
-/***/ 137:
+/***/ 142:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -425,7 +525,7 @@ exports.LayoutConfig = LayoutConfig;
 
 /***/ }),
 
-/***/ 138:
+/***/ 143:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -462,7 +562,7 @@ exports.LoginConfig = LoginConfig;
 
 /***/ }),
 
-/***/ 139:
+/***/ 144:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -514,7 +614,7 @@ exports.LoginController = LoginController;
 
 /***/ }),
 
-/***/ 140:
+/***/ 145:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -573,7 +673,7 @@ exports.AuthHelper = AuthHelper;
 
 /***/ }),
 
-/***/ 141:
+/***/ 146:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -603,7 +703,7 @@ exports.AuthService = AuthService;
 
 /***/ }),
 
-/***/ 142:
+/***/ 147:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -647,25 +747,26 @@ exports.RedmineService = RedmineService;
 
 /***/ }),
 
-/***/ 145:
+/***/ 150:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var angular = __webpack_require__(2);
-var app_config_1 = __webpack_require__(125);
-var app_run_1 = __webpack_require__(126);
-var services_module_1 = __webpack_require__(130);
-var layout_module_1 = __webpack_require__(128);
-var home_module_1 = __webpack_require__(127);
-var login_module_1 = __webpack_require__(129);
+var app_config_1 = __webpack_require__(126);
+var app_run_1 = __webpack_require__(127);
+var services_module_1 = __webpack_require__(131);
+var layout_module_1 = __webpack_require__(129);
+var home_module_1 = __webpack_require__(128);
+var login_module_1 = __webpack_require__(130);
 angular
     .module('app', [
     'app.tpls',
     'ui.router',
     'ui.bootstrap',
     'ngAnimate',
+    'dndLists',
     services_module_1.ServicesModule,
     layout_module_1.LayoutModule,
     home_module_1.HomeModule,
@@ -707,5 +808,5 @@ exports.LayoutController = LayoutController;
 
 /***/ })
 
-},[145]);
+},[150]);
 //# sourceMappingURL=app.js.map
