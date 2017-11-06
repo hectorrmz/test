@@ -1,14 +1,14 @@
 import * as moment from 'moment';
 import { Inject } from '../decorators/decorators';
 
-@Inject('$scope', '$uibModalInstance', 'opts')
+@Inject('$uibModalInstance', 'opts')
 export class ModalController {
 
     time: any = {};
     now: any;
     left: string;
 
-    constructor(private _scope: any, private _uibModalInstance: ng.ui.bootstrap.IModalServiceInstance, private opts: any){
+    constructor(private _uibModalInstance: ng.ui.bootstrap.IModalServiceInstance, private opts: any){
 
         this.now = moment(this.opts.times.date).format('dddd, MMMM Do');
 

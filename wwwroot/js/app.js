@@ -472,8 +472,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var moment = __webpack_require__(0);
 var decorators_1 = __webpack_require__(1);
 var ModalController = (function () {
-    function ModalController(_scope, _uibModalInstance, opts) {
-        this._scope = _scope;
+    function ModalController(_uibModalInstance, opts) {
         this._uibModalInstance = _uibModalInstance;
         this.opts = opts;
         this.time = {};
@@ -498,7 +497,7 @@ var ModalController = (function () {
         this._uibModalInstance.close();
     };
     ModalController = __decorate([
-        decorators_1.Inject('$scope', '$uibModalInstance', 'opts')
+        decorators_1.Inject('$uibModalInstance', 'opts')
     ], ModalController);
     return ModalController;
 }());
