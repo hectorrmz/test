@@ -25,6 +25,24 @@ form.ng-submitted {
     }
 }
 
+.time-options {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 10px 0;
+    border: 1px dashed #b5b5b5;
+    display: table;
+    .time-option {
+        font-size: 12px;
+        border: 1px solid #dadada;
+        margin: 5px;
+        padding: 3px 5px;
+        min-width: 150px;
+        border-radius: 4px;
+        float: left;
+    }
+}
+
 .spinner {
     margin: 50px auto;
     width: 40px;

@@ -21,5 +21,12 @@
             </div>
         </div>
         <calendar-view times="$hc.entries" onAddTime="$hc.addTime(2)"></calendar-view>
+
+        <div class="time-options" dnd-list="$hc.options">
+            <div class="time-option activity-{{time.activity.id}}" ng-repeat="time in $hc.options" dnd-draggable="time"
+                dnd-effect-allowed="move">
+                {{time.activity.name}}
+            </div>
+        </div>
     </div>
 </div>

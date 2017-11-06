@@ -1,7 +1,7 @@
 export interface TimeItem{
     title: string;
     duration: number;
-    date: number;
+    date?: number;
     activity: {
         id: number,
         name: string

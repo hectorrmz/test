@@ -5,26 +5,21 @@
         </div>
         <div class="calendar">
             <div class="week" ng-repeat="week in cv.weeks" ng-show="currentView === $index">
-                <div class="weekday" ng-repeat="day in week.weekDays;" dnd-list="day.times.entries " ng-hide="day.day===0 || day.day===6" ng-class="{'no-active': !day.date}">
+                <div class="weekday" ng-repeat="day in week.weekDays;" dnd-drop="cv.eventAdded(event, day.times,  item)" dnd-list="day.times.entries " ng-hide="day.day===0 || day.day===6"
+                    ng-class="{'no-active': !day.date}">
                     <header>{{day.name}} {{day.date}}</header>
                     <div class="day">
-                        <div ng-repeat="time in  day.times.entries " 
-                            dnd-draggable="time" 
-                            dnd-moved="day.times.entries.splice($index, 1)"
-                            dnd-effect-allowed="move"
-                            class="time activity-{{time.activity.id}}" 
-                            dnd-disable-if="!time.isNew"
-                            ng-if="day.date"
-                            ng-class="{'no-drag': !time.isNew}">
+                        <div ng-repeat="time in  day.times.entries " dnd-draggable="time" dnd-moved="day.times.entries.splice($index, 1)" dnd-effect-allowed="move"
+                            class="time activity-{{time.activity.id}}" dnd-selected="cv.selected = time"  dnd-disable-if="!time.isNew" ng-if="day.date" ng-class="{'no-drag': !time.isNew, 'selected': time === cv.selected}">
                             <span>{{time.title}}</span>
                             <div>
                                 <span class="hours">Hours:
                                     <span class="hour-value">{{time.duration}}</span>
                                 </span>
                             </div>
+                            <div ng-if="time.isNew" ng-click="cv.removeTime($index, day.times.entries)" dnd-nodrag class="remove">X</div>
                         </div>
                     </div>
-
                     <div class="day-footer" ng-if="day.date">
                         <div class="add-btn" ng-click="cv.openModal(day.times)">+</div>
                         <span>Total: {{cv.getTotal(day.times.entries)}}</span>
@@ -35,5 +30,5 @@
         <div class="arrowed" ng-style="{'visibility': currentView < cv.weeks.length-1 ? 'visible' : 'hidden'}" ng-click="(currentView < 2) ? currentView = currentView +1 : currentView = 2">
             <div class="arrow-1 right"></div>
         </div>
-    </div>{{cv.entries}}
+    </div>
 </div>

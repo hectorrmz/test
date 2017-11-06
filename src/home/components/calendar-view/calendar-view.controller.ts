@@ -10,12 +10,14 @@ export class CalendarViewController {
     weeks: Array<Week> = [];
     entries: Array<TimeItem> = [];
     onAddTime: Function;
+    selected: TimeItem;
 
     constructor(private _scope: any) {
 
         this._scope.$on('loadTimesOnCalendar', () => {
             this.setLoggedTimeEntries();
         });
+
     }
 
     setdaysRange() {
@@ -64,11 +66,14 @@ export class CalendarViewController {
         });
     }
 
-    test(test: any, other: TimeItem, $index: number) {
-        console.log(test, other, $index);
+    eventAdded(_event: any, times:TimesList, time: TimeItem){
+        this.openModal(times, time);
+    }
 
-        this.entries.splice($index, 1);
-
+    removeTime(index: number, list: Array<TimeItem>) {
+        if (confirm("Are you sure that you want to delete this time entry?")) {
+            list.splice(index, 1);
+        }
     }
 
     private daysInMonth(month: number, year: number) {
@@ -79,22 +84,20 @@ export class CalendarViewController {
         var total: number = 0;
 
         var total = 0
-        for ( var i = 0, _len = entries.length; i < _len; i++ ) {
+        for (var i = 0, _len = entries.length; i < _len; i++) {
             total += entries[i].duration;
         }
 
         return total;
     }
 
-    openModal(times: TimesList) {
-        this._scope.$parent.$hc.addTime(times)
+    openModal(times: TimesList, time: TimeItem) {
+        this._scope.$parent.$hc.addTime(times, time);
     }
-
 
     /** Initializes the controller. */
     $onInit(): void {
         this.setdaysRange();
-
     }
 
     /** Cleans up the controller. */

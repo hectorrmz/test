@@ -219,9 +219,13 @@ var CalendarViewController = (function () {
             });
         });
     };
-    CalendarViewController.prototype.test = function (test, other, $index) {
-        console.log(test, other, $index);
-        this.entries.splice($index, 1);
+    CalendarViewController.prototype.eventAdded = function (_event, times, time) {
+        this.openModal(times, time);
+    };
+    CalendarViewController.prototype.removeTime = function (index, list) {
+        if (confirm("Are you sure that you want to delete this time entry?")) {
+            list.splice(index, 1);
+        }
     };
     CalendarViewController.prototype.daysInMonth = function (month, year) {
         return 32 - new Date(year, month, 32).getDate();
@@ -234,8 +238,8 @@ var CalendarViewController = (function () {
         }
         return total;
     };
-    CalendarViewController.prototype.openModal = function (times) {
-        this._scope.$parent.$hc.addTime(times);
+    CalendarViewController.prototype.openModal = function (times, time) {
+        this._scope.$parent.$hc.addTime(times, time);
     };
     CalendarViewController.prototype.$onInit = function () {
         this.setdaysRange();
@@ -352,6 +356,7 @@ var HomeController = (function () {
         this.events = [];
         this.entries = [];
         this.activities = [];
+        this.options = [];
         this.getIssues = function () {
             var key = _this._authHelper.getAPIKey();
             var id = _this._authHelper.getRMUserId();
@@ -374,6 +379,15 @@ var HomeController = (function () {
             if (_this._authHelper.isAuthorized()) {
                 _this._redmineService.getActivities(key).then(function (res) {
                     _this.activities = res.data.time_entry_activities;
+                    _this.activities.forEach(function (activity) {
+                        var option = {
+                            title: '',
+                            activity: activity,
+                            duration: 0,
+                            isNew: true
+                        };
+                        _this.options.push(option);
+                    });
                 });
             }
         };
@@ -404,13 +418,16 @@ var HomeController = (function () {
         });
         this._scope.$broadcast("loadTimesOnCalendar");
     };
-    HomeController.prototype.addTime = function (times) {
+    HomeController.prototype.addTime = function (times, time) {
         var modalInstance = this._uibModal.open({
             templateUrl: 'home/time-form.html',
             controller: "ModalController as md",
             scope: this._scope,
             resolve: {
-                times: times
+                opts: {
+                    times: times,
+                    time: time
+                }
             }
         });
         modalInstance.result.then(function (_selectedItem) {
@@ -455,13 +472,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var moment = __webpack_require__(0);
 var decorators_1 = __webpack_require__(1);
 var ModalController = (function () {
-    function ModalController(_scope, _uibModalInstance, times) {
+    function ModalController(_scope, _uibModalInstance, opts) {
         this._scope = _scope;
         this._uibModalInstance = _uibModalInstance;
-        this.times = times;
+        this.opts = opts;
         this.time = {};
-        this.now = new Date();
-        this.now = moment(this.times.date).format('dddd, MMMM Do');
+        this.now = moment(this.opts.times.date).format('dddd, MMMM Do');
+        this.time = this.opts.time;
     }
     ModalController.prototype.save = function (form) {
         if (form.$valid) {
@@ -469,7 +486,7 @@ var ModalController = (function () {
                 alert("Excess!");
             }
             this._uibModalInstance.close();
-            this.times.entries.push({
+            this.opts.times.entries.push({
                 title: this.time.title,
                 duration: this.time.hours,
                 activity: this.time.activity,
@@ -481,7 +498,7 @@ var ModalController = (function () {
         this._uibModalInstance.close();
     };
     ModalController = __decorate([
-        decorators_1.Inject('$scope', '$uibModalInstance', 'times')
+        decorators_1.Inject('$scope', '$uibModalInstance', 'opts')
     ], ModalController);
     return ModalController;
 }());
